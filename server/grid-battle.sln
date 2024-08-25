@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GridBattle.Api", "GridBattl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GridBattle.Data", "GridBattle.Data\GridBattle.Data.csproj", "{D46D4BCE-E676-4A39-84F2-E2450E713EF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GridBattle.Data.Importer", "GridBattle.Data.Importer\GridBattle.Data.Importer.csproj", "{A03BF507-99F5-45E4-B72E-2F4D220B4839}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{D46D4BCE-E676-4A39-84F2-E2450E713EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D46D4BCE-E676-4A39-84F2-E2450E713EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D46D4BCE-E676-4A39-84F2-E2450E713EF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A03BF507-99F5-45E4-B72E-2F4D220B4839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A03BF507-99F5-45E4-B72E-2F4D220B4839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A03BF507-99F5-45E4-B72E-2F4D220B4839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A03BF507-99F5-45E4-B72E-2F4D220B4839}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
