@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 
 namespace GridBattle.Data;
@@ -6,6 +5,7 @@ namespace GridBattle.Data;
 public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Grid> Grids => Set<Grid>();
+    public DbSet<TimerBattleRoom> TimerBattleRooms => Set<TimerBattleRoom>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,8 +36,17 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
         timerBattleRoom.OwnsMany(x => x.Players, b =>
         {
             _ = b.Property(x => x.Name).HasJsonPropertyName("name").IsRequired();
-            _ = b.Property(x => x.RoundTimes).HasJsonPropertyName("roundTimes").IsRequired();
-            _ = b.Property(x => x.MatchCount).HasJsonPropertyName("matchCount").IsRequired();
+            _ = b.Property(x => x.IsActive).HasJsonPropertyName("isActive").IsRequired();
+            _ = b.Property(x => x.Scores).HasJsonPropertyName("scores").IsRequired();
+
+            b.OwnsMany(x => x.Scores, score => {
+                score.HasJsonPropertyName("scores");
+                score.Property(x => x.MatchCount).HasJsonPropertyName("matchCount").IsRequired();
+                score.Property(x => x.Penalties).HasJsonPropertyName("penalties").IsRequired();
+                score.Property(x => x.Time).HasJsonPropertyName("time").IsRequired(false);
+                score.ToJson();
+            });
+
             b.ToJson("PLAYERS");
         });
 

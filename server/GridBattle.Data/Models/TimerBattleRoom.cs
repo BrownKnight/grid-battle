@@ -28,7 +28,14 @@ public sealed record TimerBattleRoom
     public sealed record TimerBattlePlayer
     {
         public required string Name { get; set; }
-        public required List<TimeSpan> RoundTimes { get; set; }
+        public required List<RoundScore> Scores { get; set; }
+        public required bool IsActive { get; set; }
+    }
+
+    public sealed record RoundScore
+    {
+        public TimeSpan? Time { get; set; }
         public required int MatchCount { get; set; }
+        public required int Penalties { get; set; }
     }
 }

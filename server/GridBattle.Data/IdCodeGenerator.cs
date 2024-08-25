@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 
 namespace GridBattle.Data;
 
-internal static class IdCodeGenerator
+public static class IdCodeGenerator
 {
     private static readonly char[] _idChars = "ABCDEFGHIJKLMNOPQRSTURWXYZ".ToCharArray();
 
