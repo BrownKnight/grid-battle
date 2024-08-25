@@ -8,6 +8,10 @@ type Props = {
   onIncorrect: (words: string[]) => void;
 };
 
+function Row({ children }: React.PropsWithChildren) {
+  return <div className="flex flex-row grow text-xs md:text-md max-h-20 md:max-h-24 gap-2">{children}</div>;
+}
+
 export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
   const [matchedCategories, setMatchedCategories] = useState<Category[]>([]);
@@ -47,13 +51,13 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
   };
 
   return (
-    <div className="flex flex-col grow text-center gap-3">
+    <div className="flex flex-col grow text-center gap-2">
       <div>
         <h1 className="text-xl font-bold">{grid.id}</h1>
         <h2 className="text-sm text-gray-400">by {grid.createdBy}</h2>
       </div>
       {matchedCategories.map((category, i) => (
-        <div key={i} className="flex flex-row grow max-h-24 gap-3">
+        <Row key={i}>
           {category.answers.map((word, j) => {
             const color = "bg-green-700 text-white";
             return (
@@ -62,10 +66,10 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
               </div>
             );
           })}
-        </div>
+        </Row>
       ))}
       {_.chunk(remaining, 4).map((words, i) => (
-        <div key={i} className="flex flex-row grow max-h-24 gap-3">
+        <Row key={i}>
           {words.map((word, j) => {
             const color = selected.includes(word)
               ? "bg-gray-900 hover:bg-gray-800 active:bg-gray-700 text-white"
@@ -80,7 +84,7 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
               </button>
             );
           })}
-        </div>
+        </Row>
       ))}
     </div>
   );

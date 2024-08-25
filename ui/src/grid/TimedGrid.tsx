@@ -16,7 +16,7 @@ export default function TimedGrid({ grid, startTime, interactive }: Props) {
   const onIncorrect = () => setPenalties((p) => ++p);
 
   return (
-    <div className="flex flex-col flex-auto p-4 rounded-lg border-2">
+    <div className="flex flex-col flex-auto p-2 md:p-4 rounded-lg border-2">
       {interactive ? (
         <InteractiveGrid grid={grid} onCorrect={onCorrect} onIncorrect={onIncorrect} />
       ) : (

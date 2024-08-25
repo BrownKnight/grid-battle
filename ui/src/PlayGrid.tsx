@@ -41,7 +41,7 @@ export default function PlayGrid() {
   }
 
   return (
-    <div className="flex flex-col max-w-screen-md mx-auto min-h-svh p-4">
+    <div className="flex flex-col grow max-w-screen-md mx-auto p-2">
       <TimedGrid grid={grid} startTime={startTime} interactive />
     </div>
   );
