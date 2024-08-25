@@ -36,7 +36,7 @@ public sealed record TimerBattleRoom
 
     public sealed record RoundScore
     {
-        public TimeSpan? Time { get; set; }
+        public required TimeSpan Time { get; set; }
         public required int MatchCount { get; set; }
         public required int Penalties { get; set; }
     }

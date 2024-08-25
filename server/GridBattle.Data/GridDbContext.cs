@@ -45,7 +45,7 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
             b.OwnsMany(x => x.Scores, score => {
                 score.Property(x => x.MatchCount).HasJsonPropertyName("matchCount").IsRequired();
                 score.Property(x => x.Penalties).HasJsonPropertyName("penalties").IsRequired();
-                score.Property(x => x.Time).HasJsonPropertyName("time").IsRequired(false);
+                score.Property(x => x.Time).HasJsonPropertyName("time").IsRequired();
             });
 
             b.ToJson("PLAYERS");

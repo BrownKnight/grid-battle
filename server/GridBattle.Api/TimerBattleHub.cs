@@ -163,7 +163,7 @@ public sealed class TimerBattleHub(
                 if (roundScore.MatchCount == battle.Grid.Categories.Count)
                 {
                     roundScore.Time =
-                        (DateTimeOffset.UtcNow - battle.RoundStartedAt)
+                        (DateTimeOffset.UtcNow - (battle.RoundStartedAt!.Value))
                         + (TimeSpan.FromSeconds(10) * roundScore.Penalties);
                 }
 

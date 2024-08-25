@@ -78,7 +78,7 @@ function TimerBattleScores() {
   const { battle, username } = useContext(TimerBattleContext);
 
   return (
-    <Table>
+    <Table className="overflow-x-auto">
       <Table.Head>
         <Table.HeadCell>Pos</Table.HeadCell>
         <Table.HeadCell>Player</Table.HeadCell>
@@ -88,16 +88,26 @@ function TimerBattleScores() {
         <Table.HeadCell>Total</Table.HeadCell>
       </Table.Head>
       <Table.Body>
-        {battle!.players.map((player, i) => (
-          <Table.Row key={i} className={player.name === username ? "bg-orange-100" : ""}>
-            <Table.Cell>{i + 1}</Table.Cell>
-            <Table.Cell>{player.name}</Table.Cell>
-            {player.scores.map((score) => (
-              <Table.Cell>{score.time}</Table.Cell>
-            ))}
-            <Table.Cell>TODO: TOTAL</Table.Cell>
-          </Table.Row>
-        ))}
+        {battle!.players.map((player, i) => {
+          const totalTime = new Date(player.scores.map((x) => x.time).reduce((prev, curr) => prev + curr));
+          return (
+            <Table.Row key={i} className={player.name === username ? "bg-orange-100" : ""}>
+              <Table.Cell>{i + 1}</Table.Cell>
+              <Table.Cell>{player.name}</Table.Cell>
+              {player.scores.map((score) => {
+                const time = new Date(score.time);
+                return (
+                  <Table.Cell className="font-mono">
+                    {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
+                  </Table.Cell>
+                );
+              })}
+              <Table.Cell className="font-mono">
+                {totalTime.getUTCMinutes()}:{totalTime.getUTCSeconds().toString(10).padStart(2, "0")}
+              </Table.Cell>
+            </Table.Row>
+          );
+        })}
         <Table.Row>
           <Table.Cell className="text-center" colSpan={99}>
             Room Code: <span className="font-mono font-semibold">{battle?.roomId}</span>

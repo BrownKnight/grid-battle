@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using GridBattle.Api;
 using GridBattle.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,17 +16,21 @@ builder.Services.AddDbContextFactory<GridDbContext>(options =>
 );
 
 builder
-    .Services.AddSignalR(opt =>
+    .Services.AddSignalR(options =>
     {
-        opt.EnableDetailedErrors = true;
+        options.EnableDetailedErrors = true;
     })
-    .AddJsonProtocol(opt =>
-        opt.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter())
-    );
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.PayloadSerializerOptions.Converters.Add(new TimeSpanConverter());
+    });
 
 builder.Services.ConfigureHttpJsonOptions(options =>
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
-);
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.SerializerOptions.Converters.Add(new TimeSpanConverter());
+});
 
 var app = builder.Build();
 
