@@ -4,7 +4,7 @@ import * as _ from "underscore";
 
 type Props = {
   grid: Grid;
-  onCorrect: (category: Category) => void;
+  onCorrect: (category: Category, total: number) => void;
   onIncorrect: (words: string[]) => void;
 };
 
@@ -23,6 +23,7 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
       if (matchedCategory) {
         setMatchedCategories((m) => {
           m.push(matchedCategory);
+          onCorrect(matchedCategory, m.length);
           return [...m];
         });
 
@@ -31,7 +32,6 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
           return [...r];
         });
 
-        onCorrect(matchedCategory);
       } else {
         onIncorrect(selected);
       }

@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "flowbite": "^2.5.1",
     "flowbite-react": "^0.10.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
-    "underscore": "^1.13.7"
+    "react-signalr": "^0.2.22",
+    "underscore": "^1.13.7",
+    "use-session-storage-state": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

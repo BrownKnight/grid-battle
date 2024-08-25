@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 namespace GridBattle.Data;
 
 public sealed record TimerBattleRoom

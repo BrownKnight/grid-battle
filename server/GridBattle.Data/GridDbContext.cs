@@ -1,4 +1,7 @@
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GridBattle.Data;
 
@@ -37,14 +40,12 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
         {
             _ = b.Property(x => x.Name).HasJsonPropertyName("name").IsRequired();
             _ = b.Property(x => x.IsActive).HasJsonPropertyName("isActive").IsRequired();
-            _ = b.Property(x => x.Scores).HasJsonPropertyName("scores").IsRequired();
+            // b.Property(x => x.Scores).Metadata.SetValueComparer(new ListValueComparer<TimerBattleRoom.RoundScore>());
 
             b.OwnsMany(x => x.Scores, score => {
-                score.HasJsonPropertyName("scores");
                 score.Property(x => x.MatchCount).HasJsonPropertyName("matchCount").IsRequired();
                 score.Property(x => x.Penalties).HasJsonPropertyName("penalties").IsRequired();
                 score.Property(x => x.Time).HasJsonPropertyName("time").IsRequired(false);
-                score.ToJson();
             });
 
             b.ToJson("PLAYERS");
@@ -54,4 +55,11 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
 
         base.OnModelCreating(modelBuilder);
     }
+
+    internal class ListValueComparer<T>()
+        : ValueComparer<List<T>>(
+            (c1, c2) => c1!.SequenceEqual(c2!),
+            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+            c => c.ToList()
+        );
 }

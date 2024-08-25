@@ -7,6 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       "^/api/.*": "http://localhost:5261",
+      "^/api/timerbattle/signalr": {
+        ws: true,
+        target: "ws://localhost:5261"
+      },
     },
   },
 })

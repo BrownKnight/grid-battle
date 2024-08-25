@@ -7,7 +7,7 @@ type Props = {
   grid: Grid;
   startTime: number;
   interactive?: boolean;
-  onCorrect: (category: Category) => void;
+  onCorrect: (category: Category, total: number) => void;
   onIncorrect: (words: string[]) => void;
   penalties: number;
 };
