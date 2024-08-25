@@ -27,7 +27,7 @@ export type TimerBattlePlayer = {
 };
 
 export type RoundScore = {
-  time: string;
+  time: number;
   matchCount: number;
   penalties: number;
 };

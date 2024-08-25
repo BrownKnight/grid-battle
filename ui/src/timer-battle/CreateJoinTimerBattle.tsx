@@ -1,11 +1,19 @@
 import { TimerBattleContext, TimerBattleContextProvider } from "./TimerBattleContext";
 import { Button, ButtonGroup, Label, TextInput } from "flowbite-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TimerBattleScreen from "./TimerBattleScreen";
+import { useMatch } from "react-router-dom";
 
-export default function TimerBattle() {
+export default function CreateJoinTimerBattle() {
   function Inner() {
-    const { battle, setBattle, signalR } = useContext(TimerBattleContext);
+    const { battle, setBattle, signalR, setRoomId } = useContext(TimerBattleContext);
+    const match = useMatch("/:battleId");
+
+    useEffect(() => {
+      if (match?.params.battleId && match?.params.battleId.length === 4) {
+        setRoomId(match?.params.battleId);
+      }
+    }, [match?.params.battleId, setRoomId]);
 
     signalR.useSignalREffect(
       "battle-update",

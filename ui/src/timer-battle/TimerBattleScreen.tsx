@@ -4,9 +4,12 @@ import { Button, Table } from "flowbite-react";
 import _ from "underscore";
 import TimedGrid from "../grid/TimedGrid";
 import { Category } from "../Models";
+import { useNavigate } from "react-router-dom";
+import { TimerBattlePlayer } from "./Models";
 
 export default function TimerBattleScreen() {
-  const { battle, username, signalR } = useContext(TimerBattleContext);
+  const { battle, username, signalR, setBattle, setRoomId } = useContext(TimerBattleContext);
+  const navigate = useNavigate();
 
   if (!battle) return <></>;
 
@@ -29,6 +32,12 @@ export default function TimerBattleScreen() {
 
   const selectGrid = (gridId: string) => {
     signalR.invoke("StartBattle", gridId);
+  };
+
+  const leaveGame = () => {
+    navigate("/battle");
+    setRoomId("");
+    setBattle(undefined);
   };
 
   if (battle.state === "InProgress") {
@@ -70,8 +79,13 @@ export default function TimerBattleScreen() {
     <div className="flex flex-col gap-4 max-w-screen-md p-4 mx-auto">
       <TimerBattleScores />
       <Button onClick={selectRandomGrid}>Start with Random Grid</Button>
+      <Button onClick={leaveGame} role="destructive" color="red">Leave Game</Button>
     </div>
   );
+}
+
+function calculateTotalTime(player: TimerBattlePlayer) {
+  return player.scores.map((x) => x.time).reduce((prev, curr) => prev + curr, 0);
 }
 
 function TimerBattleScores() {
@@ -88,26 +102,28 @@ function TimerBattleScores() {
         <Table.HeadCell>Total</Table.HeadCell>
       </Table.Head>
       <Table.Body>
-        {battle!.players.map((player, i) => {
-          const totalTime = new Date(player.scores.map((x) => x.time).reduce((prev, curr) => prev + curr));
-          return (
-            <Table.Row key={i} className={player.name === username ? "bg-orange-100" : ""}>
-              <Table.Cell>{i + 1}</Table.Cell>
-              <Table.Cell>{player.name}</Table.Cell>
-              {player.scores.map((score) => {
-                const time = new Date(score.time);
-                return (
-                  <Table.Cell className="font-mono">
-                    {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
-                  </Table.Cell>
-                );
-              })}
-              <Table.Cell className="font-mono">
-                {totalTime.getUTCMinutes()}:{totalTime.getUTCSeconds().toString(10).padStart(2, "0")}
-              </Table.Cell>
-            </Table.Row>
-          );
-        })}
+        {battle!.players
+          .sort((a, b) => calculateTotalTime(a) - calculateTotalTime(b))
+          .map((player, i) => {
+            const totalTime = new Date(calculateTotalTime(player));
+            return (
+              <Table.Row key={i} className={player.name === username ? "bg-orange-100" : ""}>
+                <Table.Cell>{i + 1}</Table.Cell>
+                <Table.Cell>{player.name}</Table.Cell>
+                {player.scores.map((score) => {
+                  const time = new Date(score.time);
+                  return (
+                    <Table.Cell className="font-mono">
+                      {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
+                    </Table.Cell>
+                  );
+                })}
+                <Table.Cell className="font-mono">
+                  {totalTime.getUTCMinutes()}:{totalTime.getUTCSeconds().toString(10).padStart(2, "0")}
+                </Table.Cell>
+              </Table.Row>
+            );
+          })}
         <Table.Row>
           <Table.Cell className="text-center" colSpan={99}>
             Room Code: <span className="font-mono font-semibold">{battle?.roomId}</span>
