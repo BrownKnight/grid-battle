@@ -9,6 +9,12 @@
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj",
+        },
+        {
+            "name": "C#: GridBattle.Api Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/GridBattle.Api/GridBattle.Api.csproj",
         }
     ]
 }

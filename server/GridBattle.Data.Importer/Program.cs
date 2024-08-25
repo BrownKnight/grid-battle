@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 Console.WriteLine("Importing NYT Connections Puzzles");
 
-// postgresql://admin:supersecret@localhost:5432/GRIDBATTLE_DB
 var connectionString = Environment.GetEnvironmentVariable("POSTGRES_URL");
 var dbOptions = new DbContextOptionsBuilder()
     .EnableDetailedErrors()
