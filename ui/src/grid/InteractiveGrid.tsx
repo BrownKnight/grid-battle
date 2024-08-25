@@ -54,7 +54,17 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
     <div className="flex flex-col grow text-center gap-2">
       <div>
         <h1 className="text-xl font-bold">{grid.id}</h1>
-        <h2 className="text-sm text-gray-400">by {grid.createdBy}</h2>
+
+        <h2 className="text-sm text-gray-400">
+          <span className="mr-1">by</span>
+          {grid.source === "NYT" ? (
+            <a href="https://www.nytimes.com/games/connections" target="_" className="text-sky-400 hover:text-sky-600">
+              {grid.createdBy}
+            </a>
+          ) : (
+            <span>{grid.createdBy}</span>
+          )}
+        </h2>
       </div>
       {matchedCategories.map((category, i) => (
         <Row key={i}>

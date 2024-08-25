@@ -13,6 +13,11 @@ var dbOptions = new DbContextOptionsBuilder()
     .Options;
 var db = new GridDbContext(dbOptions);
 
+if (args.Contains("--delete")) {
+    Console.WriteLine("Deleting Database as --delete argument provided");
+    await db.Database.EnsureDeletedAsync();
+}
+
 await db.Database.EnsureCreatedAsync();
 
 Console.WriteLine("DB Connected and Created");
@@ -38,9 +43,10 @@ while (fromDate < toDate)
     )!;
     var newGrid = new Grid
     {
-        Id = response!["id"]!.ToString(),
+        Id = $"NYT{response!["id"]}",
+        Name = $"NYT {response!["id"]}",
         Source = GridSource.NYT,
-        CreatedBy = "ImportAutomation",
+        CreatedBy = "NYT Connections",
         CreatedDateTime = DateTimeOffset.UtcNow,
         Categories = response["categories"]!
             .AsArray()

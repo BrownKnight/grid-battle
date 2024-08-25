@@ -11,10 +11,10 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
         var grid = modelBuilder.Entity<Grid>().ToTable("GRIDS");
         grid.HasKey(x => x.Id);
         _ = grid.Property(x => x.Id).HasColumnName("ID").HasColumnType("varchar(16)").IsRequired();
+        _ = grid.Property(x => x.Id).HasColumnName("NAME").HasColumnType("varchar(100)").IsRequired();
         _ = grid.Property(x => x.Source).HasColumnName("SOURCE").HasColumnType("varchar(16)").IsRequired().HasConversion<string>();
         _ = grid.Property(x => x.CreatedBy).HasColumnName("CRTD_BY").HasColumnType("varchar(50)").IsRequired();
         _ = grid.Property(x => x.CreatedDateTime).HasColumnName("CRTD_TS").HasColumnType("timestamptz").IsRequired();
-        // _ = grid.Property(x => x.Categories).HasColumnName("CATEGORIES");
 
         grid.OwnsMany(x => x.Categories, b =>
         {

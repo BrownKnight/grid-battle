@@ -1,5 +1,6 @@
 export type Grid = {
   id: string;
+  name: string;
   source: GridSource;
   createdDateTime: string;
   createdBy: string;
