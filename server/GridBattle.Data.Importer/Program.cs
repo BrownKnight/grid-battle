@@ -17,8 +17,13 @@ if (args.Contains("--delete")) {
 }
 
 if (args.Contains("--migrate")) {
-    Console.WriteLine("Applying latest DB migrations");
+    Console.WriteLine("Applying latest DB migrations as --migrate argument provided");
     await db.Database.MigrateAsync();
+}
+
+if (args.Contains("--create")) {
+    Console.WriteLine("Creating DB as --create argument provided");
+    await db.Database.EnsureCreatedAsync();
 }
 
 Console.WriteLine("DB Connected and Created");
@@ -33,7 +38,7 @@ var lastNytImportGrid = await db
 // If no data exists, start at the first ever puzzle (2023-06-12)
 var lastNytImportDate =
     lastNytImportGrid?.CreatedDateTime.Date
-    ?? new DateTimeOffset(2023, 06, 12, 0, 0, 0, TimeSpan.Zero).Date;
+    ?? new DateTimeOffset(2024, 06, 12, 0, 0, 0, TimeSpan.Zero).Date;
 var fromDate = DateOnly.FromDateTime(lastNytImportDate);
 var toDate = DateOnly.FromDateTime(DateTimeOffset.UtcNow.Date);
 
