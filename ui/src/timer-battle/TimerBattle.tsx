@@ -41,6 +41,7 @@ function JoinTimerBattle() {
       signalR.invoke("CreateBattle", username)?.then((res) => {
         console.log("Joining newly created battle", res);
         setBattle(res);
+        setRoomId(res.roomId);
       });
     }
   };

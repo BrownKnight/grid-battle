@@ -33,15 +33,34 @@ export default function TimerBattleScreen() {
 
   if (battle.state === "InProgress") {
     return (
-      <div className="flex flex-col grow max-w-screen-md mx-auto p-2">
-        <TimedGrid
-          grid={battle.grid!}
-          startTime={Date.parse(battle.roundStartedAt!)}
-          interactive
-          onCorrect={onCorrect}
-          onIncorrect={onIncorrect}
-          penalties={battle.players.find((x) => x.name === username)?.scores[battle.roundNumber]?.penalties ?? 0}
-        />
+      <div className="flex flex-col grow content-center mb-4 overflow-y-auto">
+        <div className="flex grow">
+          <div className="flex flex-auto max-w-screen-md mx-auto p-2">
+            <TimedGrid
+              grid={battle.grid!}
+              startTime={Date.parse(battle.roundStartedAt!)}
+              interactive
+              onCorrect={onCorrect}
+              onIncorrect={onIncorrect}
+              penalties={battle.players.find((x) => x.name === username)?.scores[battle.roundNumber]?.penalties ?? 0}
+            />
+          </div>
+        </div>
+        <div className="flex flex-row w-36 overflow-x-auto mx-auto">
+          {battle.players
+            .filter((x) => x.name !== username)
+            .map((player) => (
+              <TimedGrid
+                grid={battle.grid!}
+                startTime={Date.parse(battle.roundStartedAt!)}
+                penalties={player.scores[battle.roundNumber]?.penalties ?? 0}
+                onCorrect={() => {}}
+                onIncorrect={() => {}}
+                matchedCount={player.scores[battle.roundNumber]?.matchCount ?? 0}
+                title={player.name}
+              />
+            ))}
+        </div>
       </div>
     );
   }
@@ -72,16 +91,18 @@ function TimerBattleScores() {
         {battle!.players.map((player, i) => (
           <Table.Row key={i} className={player.name === username ? "bg-orange-100" : ""}>
             <Table.Cell>{i + 1}</Table.Cell>
-            <Table.Cell >{player.name}</Table.Cell>
+            <Table.Cell>{player.name}</Table.Cell>
             {player.scores.map((score) => (
               <Table.Cell>{score.time}</Table.Cell>
             ))}
             <Table.Cell>TODO: TOTAL</Table.Cell>
           </Table.Row>
         ))}
-      <Table.Row>
-        <Table.Cell className="text-center" colSpan={99}>Room Code: <span className="font-mono font-semibold">{battle?.roomId}</span></Table.Cell>
-      </Table.Row>
+        <Table.Row>
+          <Table.Cell className="text-center" colSpan={99}>
+            Room Code: <span className="font-mono font-semibold">{battle?.roomId}</span>
+          </Table.Cell>
+        </Table.Row>
       </Table.Body>
     </Table>
   );
