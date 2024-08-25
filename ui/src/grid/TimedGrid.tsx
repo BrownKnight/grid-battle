@@ -1,26 +1,24 @@
-import { useState } from "react";
-import { Grid } from "../Models";
+import { Category, Grid } from "../Models";
 import InteractiveGrid from "./InteractiveGrid";
 import Timer from "../common/Timer";
+import SimpleGrid from "./SimpleGrid";
 
 type Props = {
   grid: Grid;
   startTime: number;
   interactive?: boolean;
+  onCorrect: (category: Category) => void;
+  onIncorrect: (words: string[]) => void;
+  penalties: number;
 };
 
-export default function TimedGrid({ grid, startTime, interactive }: Props) {
-  const [penalties, setPenalties] = useState<number>(0);
-
-  const onCorrect = () => {};
-  const onIncorrect = () => setPenalties((p) => ++p);
-
+export default function TimedGrid({ grid, startTime, interactive, onCorrect, onIncorrect, penalties }: Props) {
   return (
-    <div className="flex flex-col flex-auto p-2 md:p-4 rounded-lg border-2">
+    <div className="flex flex-col flex-auto px-2 md:px-4 pb-1 pt-4 gap-2 rounded-lg border-2">
       {interactive ? (
         <InteractiveGrid grid={grid} onCorrect={onCorrect} onIncorrect={onIncorrect} />
       ) : (
-        <div>NON INTERACTIVE NOT SUPPORTED YET</div>
+        <SimpleGrid grid={grid} matchedCount={1} />
       )}
 
       <Timer className="self-center" timeSince={startTime} penaltyTime={penalties * 10 * 1000} />

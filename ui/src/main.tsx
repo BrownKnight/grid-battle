@@ -3,7 +3,7 @@ import './index.css'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import Root from './Root';
 import Home from './Home';
-import PlayGrid from './PlayGrid';
+import LocalPlayGrid from './LocalPlayGrid';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -11,7 +11,7 @@ const router = createBrowserRouter(
       <Route path="" element={<Home />} />
       <Route path="/:battleCode" element={<div> battle code </div>} />
       <Route path="/battle" element={<div> battle </div>} />
-      <Route path="/grid/:gridId" element={<PlayGrid />} />
+      <Route path="/grid/:gridId" element={<LocalPlayGrid />} />
     </Route>
   )
 );

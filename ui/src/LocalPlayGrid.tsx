@@ -4,11 +4,15 @@ import { Grid } from "./Models";
 import { Spinner } from "flowbite-react";
 import TimedGrid from "./grid/TimedGrid";
 
-export default function PlayGrid() {
+export default function LocalPlayGrid() {
   const { gridId } = useParams();
   const [loading, setLoading] = useState(true);
   const [grid, setGrid] = useState<Grid | undefined>(undefined);
   const [startTime, setStartTime] = useState<number>(Date.now());
+  const [penalties, setPenalties] = useState<number>(0);
+
+  const onCorrect = () => {};
+  const onIncorrect = () => setPenalties((p) => ++p);
 
   useEffect(() => {
     setLoading(true);
@@ -24,6 +28,7 @@ export default function PlayGrid() {
         if (res) setGrid(res);
         setLoading(false);
         setStartTime(Date.now());
+        setPenalties(0);
       });
   }, [gridId]);
 
@@ -37,12 +42,12 @@ export default function PlayGrid() {
   }
 
   if (!grid) {
-    return <div>unknown error, no grid loaded</div>
+    return <div>unknown error, no grid loaded</div>;
   }
 
   return (
     <div className="flex flex-col grow max-w-screen-md mx-auto p-2">
-      <TimedGrid grid={grid} startTime={startTime} interactive />
+      <TimedGrid grid={grid} startTime={startTime} interactive onCorrect={onCorrect} onIncorrect={onIncorrect} penalties={penalties} />
     </div>
   );
 }

@@ -3,8 +3,6 @@ using System.Text.Json.Nodes;
 using GridBattle.Data;
 using Microsoft.EntityFrameworkCore;
 
-Console.WriteLine("Importing NYT Connections Puzzles");
-
 var connectionString = Environment.GetEnvironmentVariable("POSTGRES_URL");
 var dbOptions = new DbContextOptionsBuilder()
     .EnableDetailedErrors()
@@ -18,9 +16,14 @@ if (args.Contains("--delete")) {
     await db.Database.EnsureDeletedAsync();
 }
 
-await db.Database.EnsureCreatedAsync();
+if (args.Contains("--migrate")) {
+    Console.WriteLine("Applying latest DB migrations");
+    await db.Database.MigrateAsync();
+}
 
 Console.WriteLine("DB Connected and Created");
+
+Console.WriteLine("Importing NYT Connections Puzzles");
 
 var lastNytImportGrid = await db
     .Grids.Where(x => x.Source == GridSource.NYT)
@@ -35,6 +38,7 @@ var fromDate = DateOnly.FromDateTime(lastNytImportDate);
 var toDate = DateOnly.FromDateTime(DateTimeOffset.UtcNow.Date);
 
 var httpClient = new HttpClient();
+var count = 0;
 while (fromDate < toDate)
 {
     Console.WriteLine($"Fetching puzzle for {fromDate:yyyy-MM-dd}");
@@ -58,13 +62,14 @@ while (fromDate < toDate)
             .ToList(),
     };
     db.Add(newGrid);
+    count++;
     fromDate = fromDate.AddDays(1);
 
     // Avoid spamming the NYT API too quickly
     await Task.Delay(500);
 }
 
-Console.WriteLine($"Adding {db.ChangeTracker.Entries().Count()} new grids");
+Console.WriteLine($"Adding {count} new grids");
 await db.SaveChangesAsync();
 
 Console.WriteLine("Import Complete");
