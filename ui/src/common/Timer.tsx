@@ -15,8 +15,11 @@ export default function Timer({ className, timeSince, penaltyTime }: Props) {
   }, [timeSince, penaltyTime]);
 
   return (
-    <div className={className}>
-      {time.getUTCMinutes()}:{time.getUTCSeconds()}
+    <div className={`flex flex-row gap-2 font-mono ${className}`}>
+      <span>
+        {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
+      </span>
+      {penaltyTime && penaltyTime > 0 ? <div className="text-red-500">+{penaltyTime / 1000}s</div> : <></>}
     </div>
   );
 }

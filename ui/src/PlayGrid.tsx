@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Grid } from "./Models";
 import { Spinner } from "flowbite-react";
-import InteractiveGrid from "./grid/InteractiveGrid";
 import TimedGrid from "./grid/TimedGrid";
 
 export default function PlayGrid() {
@@ -42,7 +41,7 @@ export default function PlayGrid() {
   }
 
   return (
-    <div className="flex flex-col max-w-screen-md mx-auto min-h-svh">
+    <div className="flex flex-col max-w-screen-md mx-auto min-h-svh p-4">
       <TimedGrid grid={grid} startTime={startTime} interactive />
     </div>
   );

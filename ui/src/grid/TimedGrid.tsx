@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Grid } from "../Models";
 import InteractiveGrid from "./InteractiveGrid";
 import Timer from "../common/Timer";
@@ -24,6 +24,7 @@ export default function TimedGrid({ grid, startTime, interactive }: Props) {
       )}
 
       <Timer className="self-center" timeSince={startTime} penaltyTime={penalties * 10 * 1000} />
+      <div></div>
     </div>
   );
 }
