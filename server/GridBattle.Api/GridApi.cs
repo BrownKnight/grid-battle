@@ -1,4 +1,3 @@
-using System.Net;
 using GridBattle.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,14 @@ public static class GridApi
             .Produces<List<Grid>>(StatusCodes.Status200OK)
             .WithOpenApi();
 
-        app.MapGet("/api/grid/{gridId}", GetGrid)
+        app.MapGet("/api/grids/random", GetRandomGrid)
+            .WithName("getRandomGrid")
+            .WithDescription("Get a random Grid")
+            .Produces<Grid>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithOpenApi();
+
+        app.MapGet("/api/grids/{gridId}", GetGrid)
             .WithName("getGridById")
             .WithDescription("Get a Grid by its ID")
             .Produces<Grid>(StatusCodes.Status200OK)
@@ -46,6 +52,12 @@ public static class GridApi
     )
     {
         var grid = await dbContext.Grids.Where(x => x.Id == gridId).FirstOrDefaultAsync();
+        return grid is null ? Results.NotFound() : TypedResults.Ok(grid);
+    }
+
+    private static async Task<IResult> GetRandomGrid([FromServices] GridDbContext dbContext)
+    {
+        var grid = await dbContext.Grids.GetRandomAsync();
         return grid is null ? Results.NotFound() : TypedResults.Ok(grid);
     }
 }
