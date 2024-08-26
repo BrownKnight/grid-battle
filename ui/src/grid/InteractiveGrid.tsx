@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Category, Grid } from "../Models";
 import * as _ from "underscore";
+import GridTitle from "./GridTitle";
 
 type Props = {
   grid: Grid;
@@ -9,7 +10,7 @@ type Props = {
 };
 
 function Row({ children }: React.PropsWithChildren) {
-  return <div className="flex flex-row grow text-xs md:text-lg max-h-20 md:max-h-24 gap-2">{children}</div>;
+  return <div className="flex flex-row aspect-[6/1] gap-1 md:gap-2">{children}</div>;
 }
 
 export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props) {
@@ -31,7 +32,6 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
           r = _.reject(r, (r) => matchedCategory.answers.includes(r));
           return [...r];
         });
-
       } else {
         onIncorrect(selected);
       }
@@ -51,22 +51,9 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
   };
 
   return (
-    <div className="flex flex-col grow text-center gap-2">
-      <div>
-        <h1 className="text-xl font-bold">{grid.name}</h1>
+    <div className="flex flex-col grow text-center gap-1 md:gap-2">
+      <GridTitle grid={grid} />
 
-        <h2 className="text-sm text-gray-400">
-          <span className="mr-1">{grid.id}</span>
-          <span className="mr-1">by</span>
-          {grid.source === "NYT" ? (
-            <a href="https://www.nytimes.com/games/connections" target="_" className="text-sky-400 hover:text-sky-600">
-              {grid.createdBy}
-            </a>
-          ) : (
-            <span>{grid.createdBy}</span>
-          )}
-        </h2>
-      </div>
       {matchedCategories.map((category, i) => (
         <Row key={i}>
           {category.answers.map((word, j) => {
@@ -88,7 +75,7 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
             return (
               <button
                 key={j}
-                className={`flex-1 grow rounded-lg content-center font-semibold ${color}`}
+                className={`flex-1 grow rounded-lg content-center font-semibold text-[0.6rem] md:text-lg ${color}`}
                 onClick={() => toggleSelected(word)}
               >
                 {word}
