@@ -46,8 +46,12 @@ export default function LocalPlayGrid() {
   }
 
   return (
-    <div className="flex flex-col grow max-w-screen-md mx-auto p-2">
-      <TimedGrid grid={grid} startTime={startTime} interactive onCorrect={onCorrect} onIncorrect={onIncorrect} penalties={penalties} />
+    <div className="flex flex-col grow mb-4">
+      <div className="flex grow justify-center p-2">
+        <div className="flex flex-col grow max-w-screen-md mx-auto">
+          <TimedGrid grid={grid} startTime={startTime} interactive onCorrect={onCorrect} onIncorrect={onIncorrect} penalties={penalties} />
+        </div>
+      </div>
     </div>
   );
 }

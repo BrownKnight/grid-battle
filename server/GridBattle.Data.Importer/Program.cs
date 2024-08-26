@@ -9,28 +9,63 @@ var dbOptions = new DbContextOptionsBuilder()
     .EnableSensitiveDataLogging()
     .UseNpgsql(connectionString)
     .Options;
-var db = new GridDbContext(dbOptions);
 
-if (args.Contains("--delete")) {
-    Console.WriteLine("Deleting Database as --delete argument provided");
-    await db.Database.EnsureDeletedAsync();
-}
+using (var db = new GridDbContext(dbOptions))
+{
+    if (args.Contains("--delete"))
+    {
+        Console.WriteLine("Deleting Database as --delete argument provided");
+        await db.Database.EnsureDeletedAsync();
+    }
 
-if (args.Contains("--migrate")) {
-    Console.WriteLine("Applying latest DB migrations as --migrate argument provided");
-    await db.Database.MigrateAsync();
-}
+    if (args.Contains("--migrate"))
+    {
+        Console.WriteLine("Applying latest DB migrations as --migrate argument provided");
+        await db.Database.MigrateAsync();
+    }
 
-if (args.Contains("--create")) {
-    Console.WriteLine("Creating DB as --create argument provided");
-    await db.Database.EnsureCreatedAsync();
+    if (args.Contains("--create"))
+    {
+        Console.WriteLine("Creating DB as --create argument provided");
+        await db.Database.EnsureCreatedAsync();
+    }
 }
 
 Console.WriteLine("DB Connected and Created");
 
+Console.WriteLine("Importing test data");
+
+using (var testDb = new GridDbContext(dbOptions))
+{
+    if (!await testDb.Grids.AnyAsync(x => x.Id == "TESTABCD"))
+    {
+        testDb.Grids.Add(
+            new()
+            {
+                Id = "TESTABCD",
+                Name = "Test Grid ABCD",
+                Source = GridSource.Test,
+                CreatedBy = "Validation",
+                CreatedDateTime = DateTimeOffset.UtcNow,
+                Categories =
+                [
+                    new() { Name = "A", Answers = ["A1", "A2", "A3", "A4"] },
+                    new() { Name = "B", Answers = ["B1", "B2", "B3", "B4"] },
+                    new() { Name = "C", Answers = ["C1", "C2", "C3", "C4"] },
+                    new() { Name = "D", Answers = ["D1", "D2", "D3", "D4"] },
+                ],
+            }
+        );
+        Console.WriteLine("Added test grid TESTABCD");
+    }
+    await testDb.SaveChangesAsync();
+}
+
 Console.WriteLine("Importing NYT Connections Puzzles");
 
-var lastNytImportGrid = await db
+using var nytDbContext = new GridDbContext(dbOptions);
+
+var lastNytImportGrid = await nytDbContext
     .Grids.Where(x => x.Source == GridSource.NYT)
     .OrderBy(x => x.CreatedDateTime)
     .LastOrDefaultAsync();
@@ -66,7 +101,7 @@ while (fromDate < toDate)
             })
             .ToList(),
     };
-    db.Add(newGrid);
+    nytDbContext.Add(newGrid);
     count++;
     fromDate = fromDate.AddDays(1);
 
@@ -75,6 +110,6 @@ while (fromDate < toDate)
 }
 
 Console.WriteLine($"Adding {count} new grids");
-await db.SaveChangesAsync();
+await nytDbContext.SaveChangesAsync();
 
 Console.WriteLine("Import Complete");
