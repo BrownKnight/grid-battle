@@ -2,15 +2,16 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build-server
 
 WORKDIR /source
 
-COPY ./server/Directory.* .
-COPY ./server/GridBattle.Data/GridBattle.Data.csproj GridBattle.Data/GridBattle.Data.csproj
-COPY ./server/GridBattle.Api/GridBattle.Api.csproj GridBattle.Api/GridBattle.Api.csproj
-RUN dotnet restore GridBattle.Api/GridBattle.Api.csproj
+COPY ./.git .
+COPY ./version.json .
+COPY ./Directory.* .
+COPY ./server/Directory.* ./server/
+COPY ./server/GridBattle.Data/GridBattle.Data.csproj ./server/GridBattle.Data/GridBattle.Data.csproj
+COPY ./server/GridBattle.Api/GridBattle.Api.csproj ./server/GridBattle.Api/GridBattle.Api.csproj
+RUN dotnet restore ./server/GridBattle.Api/GridBattle.Api.csproj
 
-COPY ./server/GridBattle.Data GridBattle.Data
-COPY ./server/GridBattle.Api GridBattle.Api
-ARG VERSION=0.0.1
-RUN dotnet publish GridBattle.Api/GridBattle.Api.csproj -c Release -o publish /p:Version=$VERSION
+COPY ./server ./server/
+RUN dotnet publish ./server/GridBattle.Api/GridBattle.Api.csproj -c Release -o publish
 
 FROM node:20 AS build-ui
 

@@ -2,15 +2,16 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build-server
 
 WORKDIR /source
 
-COPY ./server/Directory.* .
-COPY ./server/GridBattle.Data/GridBattle.Data.csproj GridBattle.Data/GridBattle.Data.csproj
-COPY ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj GridBattle.Data.Importer/GridBattle.Data.Importer.csproj
-RUN dotnet restore GridBattle.Data.Importer/GridBattle.Data.Importer.csproj
+COPY ./.git .
+COPY ./version.json .
+COPY ./Directory.* .
+COPY ./server/Directory.* ./server/
+COPY ./server/GridBattle.Data/GridBattle.Data.csproj ./server/GridBattle.Data/GridBattle.Data.csproj
+COPY ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj
+RUN dotnet restore ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj
 
-COPY ./server/GridBattle.Data GridBattle.Data
-COPY ./server/GridBattle.Data.Importer GridBattle.Data.Importer
-ARG VERSION=0.0.1
-RUN dotnet publish GridBattle.Data.Importer/GridBattle.Data.Importer.csproj -c Release -o publish /p:Version=$VERSION
+COPY ./server ./server/
+RUN dotnet publish ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj -c Release -o publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
