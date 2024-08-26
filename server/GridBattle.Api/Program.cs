@@ -24,8 +24,7 @@ builder.Services.AddDbContextFactory<GridDbContext>(options =>
 );
 
 builder
-    .Services
-    .AddSingleton<HubFilter>()
+    .Services.AddSingleton<HubFilter>()
     .AddSignalR(options =>
     {
         options.EnableDetailedErrors = true;
@@ -42,6 +41,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
     options.SerializerOptions.Converters.Add(new TimeSpanConverter());
 });
+
+builder.Services.AddHostedService<DataCleanupService>();
 
 var app = builder.Build();
 
