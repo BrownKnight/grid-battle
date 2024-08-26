@@ -10,7 +10,7 @@ COPY ./server/GridBattle.Data/GridBattle.Data.csproj ./server/GridBattle.Data/Gr
 COPY ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj
 RUN dotnet restore ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj
 
-COPY ./server ./server/
+COPY . .
 RUN dotnet publish ./server/GridBattle.Data.Importer/GridBattle.Data.Importer.csproj -c Release -o publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
