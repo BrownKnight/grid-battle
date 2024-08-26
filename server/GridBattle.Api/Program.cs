@@ -12,7 +12,7 @@ builder
     {
         opt.IncludeScopes = true;
         opt.UseUtcTimestamp = true;
-        opt.TimestampFormat = "yyyy-MM-ddThh:mm:ss.fffZ ";
+        opt.TimestampFormat = "yyyy-MM-dd'T'HH:mm:ss.fff'Z' ";
     });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -53,6 +53,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseDefaultFiles().UseStaticFiles();
 app.MapGridApi().MapHub<TimerBattleHub>("/api/timerbattle/signalr");
+app.MapFallbackToFile("index.html");
 
 app.Run();
