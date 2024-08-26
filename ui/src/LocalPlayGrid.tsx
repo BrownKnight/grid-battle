@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Grid } from "./Models";
+import { Category, Grid } from "./Models";
 import { Spinner } from "flowbite-react";
 import TimedGrid from "./grid/TimedGrid";
 
@@ -9,9 +9,14 @@ export default function LocalPlayGrid() {
   const [loading, setLoading] = useState(true);
   const [grid, setGrid] = useState<Grid | undefined>(undefined);
   const [startTime, setStartTime] = useState<number>(Date.now());
+  const [staticTime, setStaticTime] = useState<number | undefined>(undefined);
   const [penalties, setPenalties] = useState<number>(0);
 
-  const onCorrect = () => {};
+  const onCorrect = (_: Category, total: number) => {
+    if (total === grid?.categories.length) {
+      setStaticTime(Date.now() - startTime + (penalties * 10000));
+    }
+  };
   const onIncorrect = () => setPenalties((p) => ++p);
 
   useEffect(() => {
@@ -28,6 +33,7 @@ export default function LocalPlayGrid() {
         if (res) setGrid(res);
         setLoading(false);
         setStartTime(Date.now());
+        setStaticTime(undefined);
         setPenalties(0);
       });
   }, [gridId]);
@@ -49,7 +55,15 @@ export default function LocalPlayGrid() {
     <div className="flex flex-col grow mb-4">
       <div className="flex grow justify-center p-2">
         <div className="flex flex-col grow max-w-screen-md mx-auto">
-          <TimedGrid grid={grid} startTime={startTime} interactive onCorrect={onCorrect} onIncorrect={onIncorrect} penalties={penalties} />
+          <TimedGrid
+            grid={grid}
+            startTime={startTime}
+            staticTime={staticTime}
+            interactive
+            onCorrect={onCorrect}
+            onIncorrect={onIncorrect}
+            penalties={penalties}
+          />
         </div>
       </div>
     </div>

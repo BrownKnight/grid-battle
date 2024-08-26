@@ -88,7 +88,7 @@ while (fromDate < toDate)
     var newGrid = new Grid
     {
         Id = $"NYT{response!["id"]}",
-        Name = $"NYT {response!["id"]}",
+        Name = $"NYT {response!["id"]} ({response!["print_date"]})",
         Source = GridSource.NYT,
         CreatedBy = "NYT Connections",
         CreatedDateTime = DateTimeOffset.UtcNow,

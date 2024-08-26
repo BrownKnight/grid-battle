@@ -4,15 +4,22 @@ type Props = {
   className?: string;
   timeSince: number;
   penaltyTime?: number;
+  staticTime?: number;
 };
 
-export default function Timer({ className, timeSince, penaltyTime }: Props) {
+export default function Timer({ className, timeSince, penaltyTime, staticTime }: Props) {
   const [time, setTime] = useState<Date>(new Date(Date.now() - timeSince + (penaltyTime ?? 0)));
 
   useEffect(() => {
-    const interval = setInterval(() => setTime(new Date(Date.now() - timeSince + (penaltyTime ?? 0))), 200);
+    const interval = setInterval(() => {
+      if (staticTime) {
+        setTime(new Date(staticTime));
+      } else {
+        setTime(new Date(Date.now() - timeSince + (penaltyTime ?? 0)));
+      }
+    }, 200);
     return () => clearInterval(interval);
-  }, [timeSince, penaltyTime]);
+  }, [timeSince, penaltyTime, staticTime]);
 
   return (
     <div className={`flex flex-row gap-2 font-mono ${className}`}>

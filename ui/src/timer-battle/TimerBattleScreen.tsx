@@ -59,6 +59,7 @@ export default function TimerBattleScreen() {
               onCorrect={onCorrect}
               onIncorrect={onIncorrect}
               penalties={battle.players.find((x) => x.name === username)?.scores[battle.roundNumber]?.penalties ?? 0}
+              staticTime={battle.players.find((x) => x.name === username)?.scores[battle.roundNumber]?.time}
             />
           </div>
         </div>
@@ -73,6 +74,7 @@ export default function TimerBattleScreen() {
                     key={player.name}
                     grid={battle.grid!}
                     startTime={Date.parse(battle.roundStartedAt!)}
+                    staticTime={player.scores[battle.roundNumber]?.time}
                     penalties={player.scores[battle.roundNumber]?.penalties ?? 0}
                     onCorrect={() => {}}
                     onIncorrect={() => {}}

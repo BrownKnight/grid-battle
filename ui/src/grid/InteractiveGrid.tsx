@@ -53,9 +53,10 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
   return (
     <div className="flex flex-col grow text-center gap-2">
       <div>
-        <h1 className="text-xl font-bold">{grid.id}</h1>
+        <h1 className="text-xl font-bold">{grid.name}</h1>
 
         <h2 className="text-sm text-gray-400">
+          <span className="mr-1">{grid.id}</span>
           <span className="mr-1">by</span>
           {grid.source === "NYT" ? (
             <a href="https://www.nytimes.com/games/connections" target="_" className="text-sky-400 hover:text-sky-600">

@@ -6,6 +6,7 @@ import SimpleGrid from "./SimpleGrid";
 type Props = {
   grid: Grid;
   startTime: number;
+  staticTime?: number;
   interactive?: boolean;
   onCorrect: (category: Category, total: number) => void;
   onIncorrect: (words: string[]) => void;
@@ -14,7 +15,17 @@ type Props = {
   title?: string;
 };
 
-export default function TimedGrid({ grid, startTime, interactive, onCorrect, onIncorrect, penalties, title, matchedCount }: Props) {
+export default function TimedGrid({
+  grid,
+  startTime,
+  staticTime,
+  interactive,
+  onCorrect,
+  onIncorrect,
+  penalties,
+  title,
+  matchedCount,
+}: Props) {
   return (
     <div className={`flex flex-col flex-auto px-2 md:px-4 pb-1 gap-2 rounded-lg border-2 ${interactive ? "pt-4" : "pt-1"}`}>
       {interactive ? (
@@ -23,7 +34,12 @@ export default function TimedGrid({ grid, startTime, interactive, onCorrect, onI
         <SimpleGrid grid={grid} matchedCount={matchedCount ?? 0} title={title} />
       )}
 
-      <Timer className={`self-center ${interactive ? "" : "text-xs"}`} timeSince={startTime} penaltyTime={penalties * 10 * 1000} />
+      <Timer
+        className={`self-center ${interactive ? "" : "text-xs"}`}
+        timeSince={startTime}
+        staticTime={staticTime}
+        penaltyTime={penalties * 10 * 1000}
+      />
     </div>
   );
 }
