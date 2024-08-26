@@ -1,0 +1,77 @@
+import { useContext, useEffect, useState } from "react";
+import { Grid, GridSource } from "../Models";
+import { ErrorContext } from "../ErrorContext";
+import { Button, ListGroup, Spinner } from "flowbite-react";
+import { BiCaretLeft, BiCaretRight } from "react-icons/bi";
+
+type Props = {
+  pageSize: number;
+  source?: GridSource;
+  query?: string;
+  onGridChosen: (gridId: string) => void;
+};
+
+export default function ListGrids({ pageSize, source, query, onGridChosen }: Props) {
+  const { addError } = useContext(ErrorContext);
+  const [offset, setOffset] = useState<number>(0);
+  const [results, setResults] = useState<Grid[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const queryStr = [`offset=${offset}`, `limit=${pageSize}`];
+    if (source) queryStr.push(`source=${source}`);
+    if (query) queryStr.push(`search=${query}`);
+
+    fetch(`/api/grids?${queryStr.join("&")}`)
+      .then((res) => {
+        setLoading(false);
+        if (res.status > 200) {
+          throw Error("Unexpected error when fetching grids");
+        }
+        return res.json();
+      })
+      .then((res) => setResults(res))
+      .catch((err) => addError(err));
+  }, [pageSize, source, query, offset, setResults, addError]);
+
+  return (
+    <ListGroup>
+      {results.map((grid, i) => {
+        return (
+          <ListGroup.Item key={i} onClick={() => onGridChosen(grid.id)}>
+            <div className="flex flex-row justify-between grow">
+              <div className="flex flex-col items-start">
+                <span className="text-lg font-semibold">{grid.name}</span>
+                <span className="text-xs text-gray-400">by {grid.createdBy}</span>
+              </div>
+
+              <div className="flex flex-col justify-center">
+                <span className="text-xs text-gray-400">{new Date(grid.createdDateTime).toLocaleDateString()}</span>
+              </div>
+            </div>
+          </ListGroup.Item>
+        );
+      })}
+      <div className="flex flex-row justify-between p-4">
+        {offset > 0 ? (
+          <Button outline pill size="sm" onClick={() => setOffset((x) => x - pageSize)}>
+            <BiCaretLeft />
+          </Button>
+        ) : (
+          <div></div>
+        )}
+
+        {loading && <Spinner size="lg" />}
+
+        {results.length === pageSize ? (
+          <Button outline pill size="sm" onClick={() => setOffset((x) => x + pageSize)}>
+            <BiCaretRight />
+          </Button>
+        ) : (
+          <div></div>
+        )}
+      </div>
+    </ListGroup>
+  );
+}

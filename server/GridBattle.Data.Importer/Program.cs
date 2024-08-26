@@ -91,7 +91,9 @@ while (fromDate < toDate)
         Name = $"NYT {response!["id"]} ({response!["print_date"]})",
         Source = GridSource.NYT,
         CreatedBy = "NYT Connections",
-        CreatedDateTime = DateTimeOffset.UtcNow,
+        CreatedDateTime = DateTime.Parse(
+            response!["print_date"]?.ToString() ?? DateTime.UtcNow.ToString()
+        ),
         Categories = response["categories"]!
             .AsArray()
             .Select(x => new Category

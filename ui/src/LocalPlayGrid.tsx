@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Category, Grid } from "./Models";
 import { Spinner } from "flowbite-react";
 import TimedGrid from "./grid/TimedGrid";
+import { ErrorContext } from "./ErrorContext";
 
 export default function LocalPlayGrid() {
   const { gridId } = useParams();
+  const { addError } = useContext(ErrorContext);
   const [loading, setLoading] = useState(true);
   const [grid, setGrid] = useState<Grid | undefined>(undefined);
   const [startTime, setStartTime] = useState<number>(Date.now());
@@ -14,7 +16,7 @@ export default function LocalPlayGrid() {
 
   const onCorrect = (_: Category, total: number) => {
     if (total === grid?.categories.length) {
-      setStaticTime(Date.now() - startTime + (penalties * 10000));
+      setStaticTime(Date.now() - startTime + penalties * 10000);
     }
   };
   const onIncorrect = () => setPenalties((p) => ++p);
@@ -24,7 +26,7 @@ export default function LocalPlayGrid() {
     fetch(`/api/grids/${gridId}`)
       .then((res) => {
         if (res.status !== 200) {
-          console.log("Grid not found");
+          addError("Grid not found");
           return null;
         }
         return res.json();
@@ -36,12 +38,12 @@ export default function LocalPlayGrid() {
         setStaticTime(undefined);
         setPenalties(0);
       });
-  }, [gridId]);
+  }, [gridId, addError]);
 
   if (loading) {
     return (
-      <div className="flex flex-col">
-        <Spinner />
+      <div className="flex flex-col items-center mt-8 text-lg gap-4">
+        <Spinner size="lg" />
         <span>Loading Grid...</span>
       </div>
     );

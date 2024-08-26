@@ -1,5 +1,5 @@
 import { Toast } from "flowbite-react";
-import { createContext, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 
 export type Errors = { [key: string]: string };
 
@@ -18,16 +18,17 @@ export default function ErrorContextProvider({ children }: React.PropsWithChildr
     });
   };
 
-  const addError = (error: string) => {
+  const addError = useCallback(() => (error: string) => {
+    console.error("showing error", error);
     const id = crypto.randomUUID();
     setErrors((e) => {
-      return { ...e, [id]: error };
+      return { ...e, [id]: error.toString() };
     });
     // Show the error for 5 seconds, then remove if
     setTimeout(() => {
       removeError(id);
     }, 2500);
-  };
+  }, []);
 
   return (
     <ErrorContext.Provider value={{ addError: addError }}>
