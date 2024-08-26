@@ -59,7 +59,12 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
           {category.answers.map((word, j) => {
             const color = "bg-green-700 text-white";
             return (
-              <div key={j} className={`flex-1 grow rounded-lg content-center font-bold ${color}`}>
+              <div
+                key={j}
+                className={`flex-1 grow rounded-lg content-center font-bold ${
+                  word.length > 7 ? "text-[0.6rem]" : "text-sm"
+                } md:text-lg ${color}`}
+              >
                 {word}
               </div>
             );
@@ -75,7 +80,9 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
             return (
               <button
                 key={j}
-                className={`flex-1 grow rounded-lg content-center font-semibold text-[0.6rem] md:text-lg ${color}`}
+                className={`flex-1 grow rounded-lg content-center font-semibold ${
+                  word.length > 7 ? "text-[0.6rem]" : "text-sm"
+                } md:text-lg ${color}`}
                 onClick={() => toggleSelected(word)}
               >
                 {word}

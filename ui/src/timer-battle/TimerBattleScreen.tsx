@@ -47,6 +47,8 @@ export default function TimerBattleScreen() {
     sendMessage("EndRound");
   };
 
+  const isHost = battle?.players.find((x) => x.name.toUpperCase() === username.toUpperCase())?.isHost === true;
+
   if (battle.state === "InProgress") {
     return (
       <div className="flex flex-col grow mb-4">
@@ -84,12 +86,14 @@ export default function TimerBattleScreen() {
                 </div>
               ))}
 
-            <div className="flex flex-col content-center text-center justify-between w-36 border-2 px-2 pt-1 pb-2 rounded-lg">
-              <h3 className="text-sm font-semibold">Host Controls</h3>
-              <Button onClick={endRound} size="xs" color="red">
-                End Round
-              </Button>
-            </div>
+            {isHost && (
+              <div className="flex flex-col content-center text-center justify-between w-36 border-2 px-2 pt-1 pb-2 rounded-lg">
+                <h3 className="text-sm font-semibold">Host Controls</h3>
+                <Button onClick={endRound} size="xs" color="red">
+                  End Round
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
