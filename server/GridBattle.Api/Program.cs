@@ -54,7 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseDefaultFiles().UseStaticFiles();
-app.MapGridApi().MapHub<TimerBattleHub>("/api/timerbattle/signalr");
+app.MapGridApi().MapStatsApi().MapHub<TimerBattleHub>("/api/timerbattle/signalr");
 app.MapFallbackToFile("index.html");
 
 app.Run();
