@@ -127,6 +127,8 @@ public sealed class TimerBattleHub(
         var roomId = GetRoomId();
         var name = GetUsername();
 
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
+
         var battle = await ExecuteInBattleAsync(
             roomId,
             battle =>
@@ -135,7 +137,6 @@ public sealed class TimerBattleHub(
             }
         );
 
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
         Context.Items.Remove(USERNAME);
         Context.Items.Remove(ROOM_ID);
         logger.LogInformation("{Username} has left the battle room {RoomId}", name, roomId);
@@ -253,7 +254,7 @@ public sealed class TimerBattleHub(
 
     public async Task<bool> MarkPlayerAsDisconnected(string playerToMark)
     {
-        await ExecuteInBattleAsync(battle =>
+       await ExecuteInBattleAsync(battle =>
         {
             AssertIsHost(battle);
             var player =
@@ -262,18 +263,20 @@ public sealed class TimerBattleHub(
                 ) ?? throw new InvalidOperationException("Player not found in game");
             player.IsActive = false;
         });
+
         return true;
     }
 
     public async Task<bool> KickPlayer(string playerToMark)
     {
-        await ExecuteInBattleAsync(battle =>
+        var battle = await ExecuteInBattleAsync(battle =>
         {
             AssertIsHost(battle);
             battle.Players.RemoveAll(x =>
                 x.Name.Equals(playerToMark, StringComparison.OrdinalIgnoreCase)
             );
         });
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, battle.RoomId);
         return true;
     }
 
