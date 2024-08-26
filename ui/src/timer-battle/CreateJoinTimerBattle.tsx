@@ -4,10 +4,12 @@ import { useContext, useEffect, useState } from "react";
 import TimerBattleScreen from "./TimerBattleScreen";
 import { useMatch, useNavigate } from "react-router-dom";
 import { TimerBattleRoom } from "./Models";
+import { ErrorContext } from "../ErrorContext";
 
 export default function CreateJoinTimerBattle() {
   function Inner() {
     const { username, battle, setBattle, signalR, setRoomId } = useContext(TimerBattleContext);
+    const { addError } = useContext(ErrorContext);
     const match = useMatch("/:battleId");
     const navigate = useNavigate();
 
@@ -25,6 +27,7 @@ export default function CreateJoinTimerBattle() {
           setBattle(undefined);
           setRoomId("");
           navigate("/battle");
+          addError("It appears you've been kicked from the game.");
         } else {
           setBattle((b) => {
             return { ...b, ...battle };
@@ -45,18 +48,18 @@ export default function CreateJoinTimerBattle() {
 }
 
 function JoinTimerBattle() {
-  const { username, setUsername, roomId, setRoomId, setBattle, signalR } = useContext(TimerBattleContext);
+  const { username, setUsername, roomId, setRoomId, setBattle, sendMessage } = useContext(TimerBattleContext);
   const [type, setType] = useState<"join" | "create">("join");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (type === "join") {
-      signalR.invoke("JoinBattle", roomId, username)?.then((res) => {
+      sendMessage("JoinBattle", roomId, username)?.then((res) => {
         console.log("Joining battle", res);
         setBattle(res);
       });
     } else {
-      signalR.invoke("CreateBattle", username)?.then((res) => {
+      sendMessage("CreateBattle", username)?.then((res) => {
         console.log("Joining newly created battle", res);
         setBattle(res);
         setRoomId(res.roomId);

@@ -12,6 +12,8 @@ public sealed class TimerBattleHub(
     private const string USERNAME = "USERNAME";
     private const string ROOM_ID = "ROOM_ID";
 
+    // Using a simple retry policy for DB operations so that we can safely use Optimistic locking
+    // In the future, we should investigate better locking methods.
     private readonly ResiliencePipeline<TimerBattleRoom> _retryPipeline =
         new ResiliencePipelineBuilder<TimerBattleRoom>()
             .AddRetry(
@@ -120,7 +122,7 @@ public sealed class TimerBattleHub(
         return battle;
     }
 
-    public async Task LeaveBattle()
+    public async Task<bool> LeaveBattle()
     {
         var roomId = GetRoomId();
         var name = GetUsername();
@@ -137,9 +139,10 @@ public sealed class TimerBattleHub(
         Context.Items.Remove(USERNAME);
         Context.Items.Remove(ROOM_ID);
         logger.LogInformation("{Username} has left the battle room {RoomId}", name, roomId);
+        return true;
     }
 
-    public async Task StartBattle(string gridId)
+    public async Task<bool> StartBattle(string gridId)
     {
         using var db = dbContextFactory.CreateDbContext();
         var grid =
@@ -160,9 +163,11 @@ public sealed class TimerBattleHub(
                 battle.State = TimerBattleRoom.TimerBattleState.InProgress;
             }
         );
+        return true;
     }
 
-    public async Task UpdateScore(int matchCount, int penalties) =>
+    public async Task<bool> UpdateScore(int matchCount, int penalties)
+    {
         await ExecuteInBattleAsync(battle =>
         {
             if (battle.State is not TimerBattleRoom.TimerBattleState.InProgress)
@@ -215,8 +220,11 @@ public sealed class TimerBattleHub(
                 battle.RoundNumber++;
             }
         });
+        return true;
+    }
 
-    public async Task EndRound() =>
+    public async Task<bool> EndRound()
+    {
         await ExecuteInBattleAsync(battle =>
         {
             if (battle.Grid is null)
@@ -240,8 +248,11 @@ public sealed class TimerBattleHub(
             battle.State = TimerBattleRoom.TimerBattleState.Finished;
             battle.RoundNumber++;
         });
+        return true;
+    }
 
-    public async Task MarkPlayerAsDisconnected(string playerToMark) =>
+    public async Task<bool> MarkPlayerAsDisconnected(string playerToMark)
+    {
         await ExecuteInBattleAsync(battle =>
         {
             AssertIsHost(battle);
@@ -251,8 +262,11 @@ public sealed class TimerBattleHub(
                 ) ?? throw new InvalidOperationException("Player not found in game");
             player.IsActive = false;
         });
+        return true;
+    }
 
-    public async Task KickPlayer(string playerToMark) =>
+    public async Task<bool> KickPlayer(string playerToMark)
+    {
         await ExecuteInBattleAsync(battle =>
         {
             AssertIsHost(battle);
@@ -260,6 +274,8 @@ public sealed class TimerBattleHub(
                 x.Name.Equals(playerToMark, StringComparison.OrdinalIgnoreCase)
             );
         });
+        return true;
+    }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
