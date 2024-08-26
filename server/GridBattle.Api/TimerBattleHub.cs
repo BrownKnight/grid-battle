@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 
 namespace GridBattle.Data;
 
@@ -10,6 +11,27 @@ public sealed class TimerBattleHub(
 {
     private const string USERNAME = "USERNAME";
     private const string ROOM_ID = "ROOM_ID";
+
+    private readonly ResiliencePipeline<TimerBattleRoom> _retryPipeline =
+        new ResiliencePipelineBuilder<TimerBattleRoom>()
+            .AddRetry(
+                new()
+                {
+                    ShouldHandle =
+                        new PredicateBuilder<TimerBattleRoom>().Handle<DbUpdateConcurrencyException>(),
+                    MaxRetryAttempts = 5,
+                    BackoffType = DelayBackoffType.Exponential,
+                    Delay = TimeSpan.FromMilliseconds(5),
+                    OnRetry = (_) =>
+                    {
+                        logger.LogWarning(
+                            "Retrying an operation due to a DbUpdateConcurrencyException"
+                        );
+                        return ValueTask.CompletedTask;
+                    },
+                }
+            )
+            .Build();
 
     public async Task<TimerBattleRoom> CreateBattle(string name)
     {
@@ -298,10 +320,19 @@ public sealed class TimerBattleHub(
 
     private async Task<TimerBattleRoom> ExecuteInBattleAsync(Action<TimerBattleRoom> action)
     {
-        using var db = dbContextFactory.CreateDbContext();
-        return await ExecuteInBattleAsync(db, GetRoomId(), action);
+        return await _retryPipeline.ExecuteAsync(
+            async (_) =>
+            {
+                using var db = dbContextFactory.CreateDbContext();
+                return await ExecuteInBattleAsync(db, GetRoomId(), action);
+            },
+            CancellationToken.None
+        );
     }
 
+    /// <remarks>
+    /// Unlike the other Execute methods, this will not retry concurrency exceptions as the DB is passed in.
+    /// </remarks>
     private async Task<TimerBattleRoom> ExecuteInBattleAsync(
         GridDbContext db,
         Action<TimerBattleRoom> action
@@ -312,8 +343,14 @@ public sealed class TimerBattleHub(
         Action<TimerBattleRoom> action
     )
     {
-        using var db = dbContextFactory.CreateDbContext();
-        return await ExecuteInBattleAsync(db, roomId, action);
+        return await _retryPipeline.ExecuteAsync(
+            async (_) =>
+            {
+                using var db = dbContextFactory.CreateDbContext();
+                return await ExecuteInBattleAsync(db, roomId, action);
+            },
+            CancellationToken.None
+        );
     }
 
     private async Task<TimerBattleRoom> ExecuteInBattleAsync(
