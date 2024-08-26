@@ -3,6 +3,9 @@ using System.Text.Json.Nodes;
 using GridBattle.Data;
 using Microsoft.EntityFrameworkCore;
 
+Console.WriteLine($"----------------");
+Console.WriteLine($"Running Importer on {DateTimeOffset.UtcNow}");
+
 var connectionString = Environment.GetEnvironmentVariable("POSTGRES_URL");
 var dbOptions = new DbContextOptionsBuilder()
     .EnableDetailedErrors()
@@ -115,3 +118,5 @@ Console.WriteLine($"Adding {count} new grids");
 await nytDbContext.SaveChangesAsync();
 
 Console.WriteLine("Import Complete");
+Console.WriteLine($"----------------");
+
