@@ -12,6 +12,7 @@ type Props = {
   battle: TimerBattleRoom | undefined;
   setBattle: Dispatch<React.SetStateAction<TimerBattleRoom | undefined>>;
   signalR: Context<Hub<string, string>>;
+  sendMessage: <E extends string, C extends unknown[], R = unknown>(methodName: E, ...args: C) => Promise<R> | undefined;
 };
 
 export const TimerBattleContext = createContext<Props>({} as Props);
@@ -23,6 +24,13 @@ export function TimerBattleContextProvider({ children }: React.PropsWithChildren
   const [username, setUsername] = useSessionStorageState<string>("username", { defaultValue: "" });
   const [battle, setBattle] = useState<TimerBattleRoom | undefined>(undefined);
 
+  const sendMessage: <E extends string, C extends unknown[], R = unknown>(methodName: E, ...args: C) => Promise<R> | undefined = (
+    methodName,
+    ...args
+  ) => {
+    return TimerBattleSignalRContext.invoke(methodName, ...args)?.catch((reason) => console.error(reason));
+  };
+
   return (
     <TimerBattleContext.Provider
       value={{
@@ -33,10 +41,14 @@ export function TimerBattleContextProvider({ children }: React.PropsWithChildren
         battle: battle,
         setBattle: setBattle,
         signalR: TimerBattleSignalRContext,
+        sendMessage: sendMessage,
       }}
     >
       <TimerBattleSignalRContext.Provider
         url={"api/timerbattle/signalr"}
+        onError={async (e) => {
+          console.log("signalr err", e);
+        }}
         onClosed={(e) => {
           console.error(e);
           setBattle(undefined);

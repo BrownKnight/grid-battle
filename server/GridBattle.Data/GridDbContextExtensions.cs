@@ -9,6 +9,6 @@ public static class GridDbContextExtensions
     {
         var count = await grids.CountAsync();
         var randomIndex = RandomNumberGenerator.GetInt32(count);
-        return await grids.Skip(randomIndex).FirstAsync();
+        return await grids.OrderBy(x => x.Id).Skip(randomIndex).FirstAsync();
     }
 }

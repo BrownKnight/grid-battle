@@ -8,7 +8,7 @@ export default function Root() {
         <h1 className="self-center mx-auto text-lg font-semibold">Grid Battle</h1>
       </div>
 
-      <div className="flex flex-row grow">
+      <div className="flex flex-col self-stretch grow">
         <Outlet />
       </div>
     </div>

@@ -24,6 +24,7 @@ export type TimerBattlePlayer = {
   name: string;
   scores: RoundScore[];
   isActive: boolean;
+  isHost: boolean;
 };
 
 export type RoundScore = {

@@ -13,6 +13,7 @@ public sealed class TimerBattleHub(
 
     public async Task<TimerBattleRoom> CreateBattle(string name)
     {
+        name = name.ToUpperInvariant();
         var newBattle = new TimerBattleRoom()
         {
             RoomId = IdCodeGenerator.GenerateId(4),
@@ -24,6 +25,7 @@ public sealed class TimerBattleHub(
                     Name = name,
                     IsActive = true,
                     Scores = [],
+                    IsHost = true,
                 },
             ],
             RoundNumber = 0,
@@ -47,9 +49,10 @@ public sealed class TimerBattleHub(
 
     public async Task<TimerBattleRoom> JoinBattle(string roomId, string name)
     {
+        name = name.ToUpperInvariant();
         var battle = await ExecuteInBattleAsync(
             roomId,
-            (db, battle) =>
+            battle =>
             {
                 var existingPlayer = battle.Players.FirstOrDefault(x => x.Name == name);
                 if (existingPlayer is not null)
@@ -80,10 +83,10 @@ public sealed class TimerBattleHub(
                             Name = name,
                             IsActive = true,
                             Scores = [],
+                            IsHost = false,
                         }
                     );
                 }
-                return Task.CompletedTask;
             }
         );
 
@@ -95,134 +98,237 @@ public sealed class TimerBattleHub(
         return battle;
     }
 
-    public async Task StartBattle(string gridId) =>
+    public async Task LeaveBattle()
+    {
+        var roomId = GetRoomId();
+        var name = GetUsername();
+
+        var battle = await ExecuteInBattleAsync(
+            roomId,
+            battle =>
+            {
+                battle.Players.RemoveAll(x => x.Name == name);
+            }
+        );
+
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
+        Context.Items.Remove(USERNAME);
+        Context.Items.Remove(ROOM_ID);
+        logger.LogInformation("{Username} has left the battle room {RoomId}", name, roomId);
+    }
+
+    public async Task StartBattle(string gridId)
+    {
+        using var db = dbContextFactory.CreateDbContext();
+        var grid =
+            await db.Grids.Where(x => x.Id == gridId).SingleOrDefaultAsync()
+            ?? throw new InvalidOperationException("Provided Grid not found");
+
         await ExecuteInBattleAsync(
-            async (db, battle) =>
+            db,
+            battle =>
             {
                 if (battle.State is TimerBattleRoom.TimerBattleState.InProgress)
                 {
                     throw new InvalidOperationException("A battle is already in progress");
                 }
 
-                var grid =
-                    await db.Grids.Where(x => x.Id == gridId).SingleOrDefaultAsync()
-                    ?? throw new InvalidOperationException("Provided Grid not found");
-                battle.Grid = grid;
+                battle.GridId = grid.Id;
                 battle.RoundStartedAt = DateTimeOffset.UtcNow;
                 battle.State = TimerBattleRoom.TimerBattleState.InProgress;
             }
         );
+    }
 
     public async Task UpdateScore(int matchCount, int penalties) =>
-        await ExecuteInBattleAsync(
-            (db, battle) =>
+        await ExecuteInBattleAsync(battle =>
+        {
+            if (battle.State is not TimerBattleRoom.TimerBattleState.InProgress)
             {
-                if (battle.State is not TimerBattleRoom.TimerBattleState.InProgress)
-                {
-                    throw new InvalidOperationException(
-                        "Trying to update a score when the battle is not in progress"
-                    );
-                }
-                if (battle.Grid is null)
-                {
-                    throw new InvalidOperationException(
-                        "Trying to update a score when the battle does not have an active grid"
-                    );
-                }
+                throw new InvalidOperationException(
+                    "Trying to update a score when the battle is not in progress"
+                );
+            }
+            if (battle.Grid is null)
+            {
+                throw new InvalidOperationException(
+                    "Trying to update a score when the battle does not have an active grid"
+                );
+            }
 
-                var player =
-                    battle.Players.FirstOrDefault(x => x.Name == GetUsername())
-                    ?? throw new InvalidOperationException(
-                        "Unexpected error: Current player not found in room"
-                    );
-
-                logger.LogInformation(
-                    "Setting matches to {MatchCount} with {Penalties} penalties for {Username}",
-                    matchCount,
-                    penalties,
-                    player.Name
+            var player =
+                battle.Players.FirstOrDefault(x => x.Name == GetUsername())
+                ?? throw new InvalidOperationException(
+                    "Unexpected error: Current player not found in room"
                 );
 
-                if (player.Scores.Count <= battle.RoundNumber)
-                {
-                    player.Scores.Add(
-                        new()
-                        {
-                            MatchCount = 0,
-                            Penalties = 0,
-                            Time = TimeSpan.Zero,
-                        }
-                    );
-                }
+            logger.LogInformation(
+                "Setting matches to {MatchCount} with {Penalties} penalties for {Username}",
+                matchCount,
+                penalties,
+                player.Name
+            );
 
-                var roundScore = player.Scores[battle.RoundNumber];
-                roundScore.MatchCount = matchCount;
-                roundScore.Penalties = penalties;
-                // If the player has matched all categories, record the time it took
-                // This value is calculated on the server to ensure fairness
-                if (roundScore.MatchCount == battle.Grid.Categories.Count)
+            var roundScore = EnsurePlayerHasScoreForCurrentRound(battle, player);
+            roundScore.MatchCount = matchCount;
+            roundScore.Penalties = penalties;
+            // If the player has matched all categories, record the time it took
+            // This value is calculated on the server to ensure fairness
+            if (roundScore.MatchCount == battle.Grid.Categories.Count)
+            {
+                roundScore.Time =
+                    (DateTimeOffset.UtcNow - (battle.RoundStartedAt!.Value))
+                    + (TimeSpan.FromSeconds(10) * roundScore.Penalties);
+            }
+
+            // If all players have matched all categories, end the battle
+            if (
+                battle.Players.All(x =>
+                    x.Scores.ElementAtOrDefault(battle.RoundNumber)?.MatchCount
+                    == battle.Grid.Categories.Count
+                )
+            )
+            {
+                battle.State = TimerBattleRoom.TimerBattleState.Finished;
+                battle.RoundNumber++;
+            }
+        });
+
+    public async Task EndRound() =>
+        await ExecuteInBattleAsync(battle =>
+        {
+            if (battle.Grid is null)
+                throw new InvalidOperationException("There is no round in progress to end");
+
+            AssertIsHost(battle);
+
+            // Any players that haven't finished have their current time marked as their final
+            foreach (var player in battle.Players)
+            {
+                var roundScore = EnsurePlayerHasScoreForCurrentRound(battle, player);
+                var expectedMatches = battle.Grid.Categories.Count;
+                if (roundScore.MatchCount < expectedMatches)
                 {
                     roundScore.Time =
                         (DateTimeOffset.UtcNow - (battle.RoundStartedAt!.Value))
                         + (TimeSpan.FromSeconds(10) * roundScore.Penalties);
                 }
-
-                // If all players have matched all categories, end the battle
-                if (
-                    battle.Players.All(x =>
-                        x.Scores.ElementAtOrDefault(battle.RoundNumber)?.MatchCount
-                        == battle.Grid.Categories.Count
-                    )
-                )
-                {
-                    battle.State = TimerBattleRoom.TimerBattleState.Finished;
-                    battle.RoundNumber++;
-                }
-                return Task.CompletedTask;
             }
-        );
+
+            battle.State = TimerBattleRoom.TimerBattleState.Finished;
+            battle.RoundNumber++;
+        });
+
+    public async Task MarkPlayerAsDisconnected(string playerToMark) =>
+        await ExecuteInBattleAsync(battle =>
+        {
+            AssertIsHost(battle);
+            var player =
+                battle.Players.FirstOrDefault(x =>
+                    x.Name.Equals(playerToMark, StringComparison.OrdinalIgnoreCase)
+                ) ?? throw new InvalidOperationException("Player not found in game");
+            player.IsActive = false;
+        });
+
+    public async Task KickPlayer(string playerToMark) =>
+        await ExecuteInBattleAsync(battle =>
+        {
+            AssertIsHost(battle);
+            battle.Players.RemoveAll(x =>
+                x.Name.Equals(playerToMark, StringComparison.OrdinalIgnoreCase)
+            );
+        });
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         try
         {
-            logger.LogWarning(
-                "Player {Username} disconnected",
-                Context.Items[USERNAME] ?? "UNKNOWN"
-            );
-            await ExecuteInBattleAsync(
-                (db, battle) =>
+            var username = Context.Items[USERNAME];
+            if (username is not null)
+            {
+                logger.LogWarning("Player {Username} disconnected", username);
+                await ExecuteInBattleAsync(battle =>
                 {
                     var player = battle.Players.FirstOrDefault(x => x.Name == GetUsername());
                     if (player is not null)
                     {
                         player.IsActive = false;
                     }
-                    return Task.CompletedTask;
-                }
-            );
+                });
+            }
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to mark player as inactive when disconnecting");
+        }
         await base.OnDisconnectedAsync(exception);
     }
 
+    private static TimerBattleRoom.RoundScore EnsurePlayerHasScoreForCurrentRound(
+        TimerBattleRoom battle,
+        TimerBattleRoom.TimerBattlePlayer player
+    )
+    {
+        if (player.Scores.Count <= battle.RoundNumber)
+        {
+            player.Scores.Add(
+                new()
+                {
+                    MatchCount = 0,
+                    Penalties = 0,
+                    Time = TimeSpan.Zero,
+                }
+            );
+        }
+        return player.Scores[battle.RoundNumber];
+    }
+
+    private void AssertIsHost(TimerBattleRoom battle)
+    {
+        var player =
+            battle.Players.FirstOrDefault(x => x.Name == GetUsername())
+            ?? throw new InvalidOperationException(
+                "Unexpected error: Current player not found in room"
+            );
+        if (!player.IsHost)
+        {
+            throw new InvalidOperationException("Only a Host may perform this action");
+        }
+    }
+
+    private async Task<TimerBattleRoom> ExecuteInBattleAsync(Action<TimerBattleRoom> action)
+    {
+        using var db = dbContextFactory.CreateDbContext();
+        return await ExecuteInBattleAsync(db, GetRoomId(), action);
+    }
+
     private async Task<TimerBattleRoom> ExecuteInBattleAsync(
-        Func<GridDbContext, TimerBattleRoom, Task> action
-    ) => await ExecuteInBattleAsync(GetRoomId(), action);
+        GridDbContext db,
+        Action<TimerBattleRoom> action
+    ) => await ExecuteInBattleAsync(db, GetRoomId(), action);
 
     private async Task<TimerBattleRoom> ExecuteInBattleAsync(
         string roomId,
-        Func<GridDbContext, TimerBattleRoom, Task> action
+        Action<TimerBattleRoom> action
     )
     {
         using var db = dbContextFactory.CreateDbContext();
+        return await ExecuteInBattleAsync(db, roomId, action);
+    }
+
+    private async Task<TimerBattleRoom> ExecuteInBattleAsync(
+        GridDbContext db,
+        string roomId,
+        Action<TimerBattleRoom> action
+    )
+    {
         var battleRoom =
             await db
                 .TimerBattleRooms.Include(x => x.Grid)
-                .SingleOrDefaultAsync(x => x.RoomId == roomId)
+                .SingleOrDefaultAsync(x => x.RoomId == roomId.ToUpperInvariant())
             ?? throw new InvalidOperationException("Room not found");
 
-        await action(db, battleRoom);
+        action(battleRoom);
 
         battleRoom.ModifiedDateTime = DateTime.UtcNow;
         db.ChangeTracker.DetectChanges();

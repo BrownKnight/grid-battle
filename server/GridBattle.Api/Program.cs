@@ -1,12 +1,20 @@
 using System.Text.Json.Serialization;
 using GridBattle.Api;
 using GridBattle.Data;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder
+    .Logging.ClearProviders()
+    .AddSimpleConsole(opt =>
+    {
+        opt.IncludeScopes = true;
+        opt.UseUtcTimestamp = true;
+        opt.TimestampFormat = "yyyy-MM-ddThh:mm:ss.fffZ ";
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -16,9 +24,12 @@ builder.Services.AddDbContextFactory<GridDbContext>(options =>
 );
 
 builder
-    .Services.AddSignalR(options =>
+    .Services
+    .AddSingleton<HubFilter>()
+    .AddSignalR(options =>
     {
         options.EnableDetailedErrors = true;
+        options.AddFilter<HubFilter>();
     })
     .AddJsonProtocol(options =>
     {

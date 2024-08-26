@@ -32,6 +32,7 @@ public sealed record TimerBattleRoom
         public required string Name { get; set; }
         public required List<RoundScore> Scores { get; set; }
         public required bool IsActive { get; set; }
+        public required bool IsHost { get; set; }
     }
 
     public sealed record RoundScore

@@ -2,12 +2,14 @@ import { TimerBattleContext, TimerBattleContextProvider } from "./TimerBattleCon
 import { Button, ButtonGroup, Label, TextInput } from "flowbite-react";
 import { useContext, useEffect, useState } from "react";
 import TimerBattleScreen from "./TimerBattleScreen";
-import { useMatch } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
+import { TimerBattleRoom } from "./Models";
 
 export default function CreateJoinTimerBattle() {
   function Inner() {
-    const { battle, setBattle, signalR, setRoomId } = useContext(TimerBattleContext);
+    const { username, battle, setBattle, signalR, setRoomId } = useContext(TimerBattleContext);
     const match = useMatch("/:battleId");
+    const navigate = useNavigate();
 
     useEffect(() => {
       if (match?.params.battleId && match?.params.battleId.length === 4) {
@@ -17,10 +19,18 @@ export default function CreateJoinTimerBattle() {
 
     signalR.useSignalREffect(
       "battle-update",
-      (battle) =>
-        setBattle((b) => {
-          return { ...b, ...battle };
-        }),
+      (battle: TimerBattleRoom) => {
+        if (!battle.players.find((x) => x.name.toUpperCase() === username)) {
+          // Current player no longer in the game, they've been kicked
+          setBattle(undefined);
+          setRoomId("");
+          navigate("/battle");
+        } else {
+          setBattle((b) => {
+            return { ...b, ...battle };
+          });
+        }
+      },
       [setBattle]
     );
 
@@ -71,7 +81,7 @@ function JoinTimerBattle() {
           id="username"
           name="username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => setUsername(e.target.value.toUpperCase())}
           placeholder="John"
           maxLength={20}
           required
@@ -84,7 +94,7 @@ function JoinTimerBattle() {
             id="roomId"
             name="roomId"
             value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
+            onChange={(e) => setRoomId(e.target.value.toUpperCase())}
             placeholder="ABCD"
             minLength={4}
             maxLength={4}
