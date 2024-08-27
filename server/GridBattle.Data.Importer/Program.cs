@@ -82,7 +82,7 @@ var toDate = DateOnly.FromDateTime(DateTimeOffset.UtcNow.Date);
 
 var httpClient = new HttpClient();
 var count = 0;
-while (fromDate < toDate)
+while (fromDate <= toDate)
 {
     Console.WriteLine($"Fetching puzzle for {fromDate:yyyy-MM-dd}");
     var response = await httpClient.GetFromJsonAsync<JsonObject>(
@@ -106,6 +106,7 @@ while (fromDate < toDate)
             })
             .ToList(),
     };
+    Console.WriteLine($"Adding new Grid {newGrid}");
     nytDbContext.Add(newGrid);
     count++;
     fromDate = fromDate.AddDays(1);
