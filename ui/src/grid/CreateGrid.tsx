@@ -1,4 +1,4 @@
-import { Button, FloatingLabel, HR, Label, TextInput } from "flowbite-react";
+import { Button, FloatingLabel, HR } from "flowbite-react";
 import { useContext, useState } from "react";
 import { Category } from "../Models";
 import { ErrorContext } from "../ErrorContext";

@@ -75,12 +75,12 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
         <Row key={i}>
           {words.map((word, j) => {
             const color = selected.includes(word)
-              ? "bg-gray-900 hover:bg-gray-800 active:bg-gray-700 text-white"
-              : "bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800";
+              ? "bg-teal-500 hover:bg-teal-400 active:bg-teal-300"
+              : "bg-gray-200 hover:bg-teal-300 active:bg-teal-400";
             return (
               <button
                 key={j}
-                className={`flex-1 grow rounded-lg content-center font-semibold ${
+                className={`flex-1 grow rounded-lg content-center font-semibold text-gray-800 ${
                   word.length > 7 ? "text-[0.6rem]" : "text-sm"
                 } md:text-lg ${color}`}
                 onClick={() => toggleSelected(word)}
