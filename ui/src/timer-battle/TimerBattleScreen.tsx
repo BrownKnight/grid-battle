@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { TimerBattleContext } from "./TimerBattleContext";
-import { Button, Popover, Table } from "flowbite-react";
+import { Badge, Button, Popover, Table } from "flowbite-react";
 import _ from "underscore";
 import TimedGrid from "../grid/TimedGrid";
 import { Category } from "../Models";
 import { useNavigate } from "react-router-dom";
 import { TimerBattlePlayer } from "./Models";
 import { HiOutlineEllipsisHorizontal } from "react-icons/hi2";
+import SearchGrids from "../grid/SearchGrids";
+import { TbPlugConnectedX } from "react-icons/tb";
 
 export default function TimerBattleScreen() {
   const { battle, username, sendMessage, setBattle, setRoomId } = useContext(TimerBattleContext);
@@ -102,12 +104,26 @@ export default function TimerBattleScreen() {
 
   // Battle is not in progress, need to pick a grid
   return (
-    <div className="flex flex-col gap-4 max-w-screen-md p-4 mx-auto">
-      <TimerBattleScores />
-      <Button onClick={selectRandomGrid}>Start with Random Grid</Button>
-      <Button onClick={leaveGame} role="destructive" color="red">
-        Leave Game
-      </Button>
+    <div className="flex flex-col gap-4 m-4">
+      <div className="flex grow justify-center p-2">
+        <div className="flex flex-col gap-2 overflow-x-auto">
+          <TimerBattleScores />
+        </div>
+      </div>
+      <div className="flex grow justify-center p-2">
+        <div className="flex flex-col  gap-2 grow max-w-screen-md">
+          <Button onClick={selectRandomGrid}>Start with Random Grid</Button>
+          <Button onClick={leaveGame} role="destructive" color="red">
+            Leave Game
+          </Button>
+        </div>
+      </div>
+      <div className="flex grow justify-center p-2">
+        <div className="grow max-w-screen-md">
+          <h1 className="font-semibold text-2xl text-center my-2">Recent NYT Grids</h1>
+          <SearchGrids pageSize={5} onGridChosen={(gridId) => selectGrid(`/grid/${gridId}`)} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -134,15 +150,15 @@ function TimerBattleScores() {
   };
 
   return (
-    <Table className="overflow-x-auto" hoverable>
+    <Table hoverable>
       <Table.Head>
-        <Table.HeadCell>Pos</Table.HeadCell>
-        <Table.HeadCell>Player</Table.HeadCell>
+        <Table.HeadCell className="p-2">Pos</Table.HeadCell>
+        <Table.HeadCell className="p-2">Player</Table.HeadCell>
         {_.range(battle!.roundNumber).map((round) => (
-          <Table.HeadCell key={round}>Round {round}</Table.HeadCell>
+          <Table.HeadCell className="p-2 min-w-20" key={round}>Round {round + 1}</Table.HeadCell>
         ))}
-        <Table.HeadCell>Total</Table.HeadCell>
-        {isHost && <Table.HeadCell></Table.HeadCell>}
+        <Table.HeadCell className="p-2">Total</Table.HeadCell>
+        {isHost && <Table.HeadCell className="p-2"></Table.HeadCell>}
       </Table.Head>
       <Table.Body>
         {battle!.players
@@ -151,28 +167,36 @@ function TimerBattleScores() {
             const totalTime = new Date(calculateTotalTime(player));
             const totalPenalties = calculatePenalties(player);
             return (
-              <Table.Row key={i} className={player.name === username ? "bg-gray-200 dark:bg-gray-500" : ""}>
-                <Table.Cell>{i + 1}</Table.Cell>
-                <Table.Cell>{player.name}</Table.Cell>
+              <Table.Row key={i}>
+                <Table.Cell className="p-2 text-right">{i + 1}</Table.Cell>
+                <Table.Cell className="inline-flex gap-2 p-2">
+                  <span>{player.name}</span>
+                  {player.isHost && <Badge>Host</Badge>}
+                  {!player.isActive && (
+                    <Badge color="warning" icon={TbPlugConnectedX}>
+                      Disconnected
+                    </Badge>
+                  )}
+                </Table.Cell>
                 {player.scores.map((score, j) => {
                   const time = new Date(score.time);
                   return (
-                    <Table.Cell key={j} className="inline-flex gap-1 font-mono">
+                    <Table.Cell key={j} className="font-mono p-2">
                       <span>
                         {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
                       </span>
-                      {score.penalties > 0 && <span className="text-red-500">+{score.penalties * 10}s</span>}
+                      {score.penalties > 0 && <span className="ml-1 font-semibold text-red-500">+{score.penalties * 10}s</span>}
                     </Table.Cell>
                   );
                 })}
-                <Table.Cell className="inline-flex gap-1 font-mono">
+                <Table.Cell className="font-mono p-2">
                   <span>
                     {totalTime.getUTCMinutes()}:{totalTime.getUTCSeconds().toString(10).padStart(2, "0")}
                   </span>
-                  {totalPenalties > 0 && <span className="text-red-500">+{totalPenalties * 10}s</span>}
+                  {totalPenalties > 0 && <span className="ml-1 font-semibold text-red-500">+{totalPenalties * 10}s</span>}
                 </Table.Cell>
                 {isHost && (
-                  <Table.Cell>
+                  <Table.Cell className="p-2">
                     <Popover
                       content={
                         <div className="w-56 flex flex-col p-2">

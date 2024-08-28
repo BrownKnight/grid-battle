@@ -27,6 +27,7 @@ export default function ListGrids({ pageSize, source, query, onGridChosen }: Pro
       .then((res) => {
         setLoading(false);
         if (res.status > 200) {
+          setResults([]);
           throw Error("Unexpected error when fetching grids");
         }
         return res.json();
@@ -37,6 +38,7 @@ export default function ListGrids({ pageSize, source, query, onGridChosen }: Pro
 
   return (
     <ListGroup>
+      {!loading && results.length === 0 && <ListGroup.Item>No Grids Found</ListGroup.Item>}
       {results.map((grid, i) => {
         return (
           <ListGroup.Item key={i} onClick={() => onGridChosen(grid.id)}>
@@ -53,23 +55,23 @@ export default function ListGrids({ pageSize, source, query, onGridChosen }: Pro
           </ListGroup.Item>
         );
       })}
-      <div className="flex flex-row justify-between p-4">
+      <div className="flex flex-row justify-between items-center p-4">
         {offset > 0 ? (
-          <Button outline pill size="sm" onClick={() => setOffset((x) => x - pageSize)}>
+          <Button className="w-10" outline pill size="sm" onClick={() => setOffset((x) => x - pageSize)}>
             <BiCaretLeft />
           </Button>
         ) : (
-          <div></div>
+          <div className="w-10">&nbsp;</div>
         )}
 
-        {loading && <Spinner size="lg" />}
+        {loading ? <Spinner size="lg" /> : <span>Page {offset / pageSize + 1}</span>}
 
         {results.length === pageSize ? (
-          <Button outline pill size="sm" onClick={() => setOffset((x) => x + pageSize)}>
+          <Button className="w-10" outline pill size="sm" onClick={() => setOffset((x) => x + pageSize)}>
             <BiCaretRight />
           </Button>
         ) : (
-          <div></div>
+          <div className="w-10">&nbsp;</div>
         )}
       </div>
     </ListGroup>

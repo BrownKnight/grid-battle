@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ListGrids from "./grid/ListGrids";
 import { LuPlus, LuSwords } from "react-icons/lu";
 import { BiShuffle } from "react-icons/bi";
+import SearchGrids from "./grid/SearchGrids";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col grow">
+    <div className="flex flex-col grow mb-8">
       <div className="flex justify-center p-2">
         <div className="flex flex-col grow max-w-screen-sm gap-4 px-4 pt-4 text-2xl">
           <NavButton to="/battle" color="red">
@@ -46,6 +47,12 @@ export default function Home() {
         <div className="grow max-w-screen-md">
           <h1 className="font-semibold text-2xl text-center my-2">Recent NYT Grids</h1>
           <ListGrids pageSize={5} source="NYT" onGridChosen={(gridId) => navigate(`/grid/${gridId}`)} />
+        </div>
+      </div>
+      <div className="flex grow justify-center p-2">
+        <div className="grow max-w-screen-md">
+          <h1 className="font-semibold text-2xl text-center my-2">Find a Grid</h1>
+          <SearchGrids pageSize={5} onGridChosen={(gridId) => navigate(`/grid/${gridId}`)} />
         </div>
       </div>
     </div>

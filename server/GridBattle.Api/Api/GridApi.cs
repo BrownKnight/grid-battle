@@ -51,8 +51,8 @@ public static class GridApi
                 (source == null || x.Source == source)
                 && (
                     search == null
-                    || x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
-                    || x.Id.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    || EF.Functions.ILike(x.Name, $"%{search}%")
+                    || EF.Functions.ILike(x.Id, $"%{search}%")
                 )
             )
             .OrderByDescending(x => x.CreatedDateTime)
