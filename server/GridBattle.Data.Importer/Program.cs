@@ -77,7 +77,7 @@ var lastNytImportGrid = await nytDbContext
 var lastNytImportDate =
     lastNytImportGrid?.CreatedDateTime.Date
     ?? new DateTimeOffset(2023, 06, 12, 0, 0, 0, TimeSpan.Zero).Date;
-var fromDate = DateOnly.FromDateTime(lastNytImportDate);
+var fromDate = DateOnly.FromDateTime(lastNytImportDate).AddDays(1);
 var toDate = DateOnly.FromDateTime(DateTimeOffset.UtcNow.Date);
 
 var httpClient = new HttpClient();
