@@ -87,8 +87,8 @@ export default function TimerBattleScreen() {
               ))}
 
             {isHost && (
-              <div className="flex flex-col content-center text-center justify-between w-36 border-2 px-2 pt-1 pb-2 rounded-lg">
-                <h3 className="text-sm font-semibold">Host Controls</h3>
+              <div className="flex flex-col content-center text-center justify-between w-36 border-2 dark:border-slate-700 px-2 pt-1 pb-2 rounded-lg">
+                <h3 className="text-sm font-semibold text-black dark:text-gray-200">Host Controls</h3>
                 <Button onClick={endRound} size="xs" color="red">
                   End Round
                 </Button>
@@ -114,6 +114,10 @@ export default function TimerBattleScreen() {
 
 function calculateTotalTime(player: TimerBattlePlayer) {
   return player.scores.map((x) => x.time).reduce((prev, curr) => prev + curr, 0);
+}
+
+function calculatePenalties(player: TimerBattlePlayer) {
+  return player.scores.map((x) => x.penalties).reduce((prev, curr) => prev + curr, 0);
 }
 
 function TimerBattleScores() {
@@ -145,20 +149,27 @@ function TimerBattleScores() {
           .sort((a, b) => calculateTotalTime(a) - calculateTotalTime(b))
           .map((player, i) => {
             const totalTime = new Date(calculateTotalTime(player));
+            const totalPenalties = calculatePenalties(player);
             return (
-              <Table.Row key={i} className={player.name === username ? "bg-orange-100" : ""}>
+              <Table.Row key={i} className={player.name === username ? "bg-gray-200 dark:bg-gray-500" : ""}>
                 <Table.Cell>{i + 1}</Table.Cell>
                 <Table.Cell>{player.name}</Table.Cell>
                 {player.scores.map((score, j) => {
                   const time = new Date(score.time);
                   return (
-                    <Table.Cell key={j} className="font-mono">
-                      {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
+                    <Table.Cell key={j} className="inline-flex gap-1 font-mono">
+                      <span>
+                        {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
+                      </span>
+                      {score.penalties > 0 && <span className="text-red-500">+{score.penalties * 10}s</span>}
                     </Table.Cell>
                   );
                 })}
-                <Table.Cell className="font-mono">
-                  {totalTime.getUTCMinutes()}:{totalTime.getUTCSeconds().toString(10).padStart(2, "0")}
+                <Table.Cell className="inline-flex gap-1 font-mono">
+                  <span>
+                    {totalTime.getUTCMinutes()}:{totalTime.getUTCSeconds().toString(10).padStart(2, "0")}
+                  </span>
+                  {totalPenalties > 0 && <span className="text-red-500">+{totalPenalties * 10}s</span>}
                 </Table.Cell>
                 {isHost && (
                   <Table.Cell>

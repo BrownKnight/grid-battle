@@ -1,4 +1,4 @@
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button, FloatingLabel, HR, Label, TextInput } from "flowbite-react";
 import { useContext, useState } from "react";
 import { Category } from "../Models";
 import { ErrorContext } from "../ErrorContext";
@@ -52,23 +52,28 @@ export default function CreateGrid() {
       <span className="my-4 font-bold text-xl text-center">Create your own Grid</span>
       <div className="flex justify-center p-2">
         <div className="flex flex-col grow max-w-screen-sm">
-          <Label htmlFor="gridName" value="Grid Name" />
-          <TextInput value={gridName} onChange={(e) => setGridName(e.target.value)} required />
-
-          <Label className="mt-4" htmlFor="username" value="Username" />
-          <TextInput value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <FloatingLabel variant="outlined" label="Grid Name" value={gridName} onChange={(e) => setGridName(e.target.value)} required />
+          <FloatingLabel variant="outlined" label="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
         </div>
       </div>
 
       {categories.map((category, i) => (
-        <div className="flex flex-col border-2 m-2 rounded-lg">
-          <span className="text-center mt-2 mb-1 font-semibold">Category {i + 1}</span>
-          <TextInput className="w-64 mx-auto" value={category.name} onChange={(e) => setCategoryName(e, i)} required />
+        <div className="flex flex-col m-2 rounded-lg">
+          <HR.Text text={`Category ${i + 1}`} />
+          <div className="w-64 mx-auto">
+            <FloatingLabel
+              variant="outlined"
+              label="Category Name"
+              value={category.name}
+              onChange={(e) => setCategoryName(e, i)}
+              required
+            />
+          </div>
           <span className="text-center mt-4">Answers</span>
           <div key={i} className="flex flex-row flex-wrap px-2 pb-2">
             {category.answers.map((answer, j) => (
               <div key={j} className="p-1 grow">
-                <TextInput value={answer} onChange={(e) => setAnswers(e, i, j)} required />
+                <FloatingLabel variant="outlined" value={answer} onChange={(e) => setAnswers(e, i, j)} required label={`Answer ${j + 1}`} />
               </div>
             ))}
           </div>

@@ -22,7 +22,7 @@ export default function Timer({ className, timeSince, penaltyTime, staticTime }:
   }, [timeSince, penaltyTime, staticTime]);
 
   return (
-    <div className={`flex flex-row gap-2 font-mono ${className}`}>
+    <div className={`flex flex-row gap-2 font-mono text-black dark:text-gray-200 ${className}`}>
       <span>
         {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
       </span>
