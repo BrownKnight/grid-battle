@@ -2,6 +2,8 @@ using GridBattle.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+namespace GridBattle.Api;
+
 public static class GridApi
 {
     public static WebApplication MapGridApi(this WebApplication app)
