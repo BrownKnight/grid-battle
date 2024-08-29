@@ -20,7 +20,7 @@ export default function GridTitle({ grid }: { grid: Grid }) {
 
       <div className="flex flex-col items-end justify-around">
         <span className="text-xs text-gray-400">{new Date(grid.createdDateTime).toLocaleDateString()}</span>
-        <span className="text-xs text-gray-400">ID: {grid.id}</span>
+        <span className="text-xs text-gray-400">ID: <span className="font-mono font-semibold">{grid.id}</span></span>
       </div>
     </div>
   );

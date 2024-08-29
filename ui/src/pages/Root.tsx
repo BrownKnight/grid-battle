@@ -27,11 +27,12 @@ export default function Root() {
 }
 
 function Avatar() {
-  const { showLogin } = useContext(UserContext);
+  const { showLogin, user } = useContext(UserContext);
 
   return (
-    <a href="#" className="fixed right-4" onClick={showLogin}>
-      <RxAvatar />
+    <a href="#" className="absolute right-4 inline-flex items-center gap-1" onClick={showLogin}>
+      <RxAvatar size={20} />
+      { user?.username ? <span className="max-w-16 truncate">{user.username}</span> : <span>Login</span>}
     </a>
   );
 }
