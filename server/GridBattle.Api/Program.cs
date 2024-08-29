@@ -44,6 +44,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.Services.AddHostedService<DataCleanupService>();
 
+builder.Services.AddAuthentication().AddJwtBearer();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -54,6 +56,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseDefaultFiles().UseStaticFiles();
+app.UseAuthorization();
 app.MapGridApi().MapStatsApi().MapHub<TimerBattleHub>("/api/timerbattle/signalr");
 app.MapFallbackToFile("index.html");
 

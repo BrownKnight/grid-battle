@@ -34,6 +34,12 @@ public static class GridApi
             .Produces<Grid>(StatusCodes.Status200OK)
             .WithOpenApi();
 
+        app.MapGet("/api/grids/{gridId}/leaderboards/{leaderboardId}", CreateGrid)
+            .WithName("getGridLeaderboardById")
+            .WithDescription("Gets the specified Leaderboard for the specified Grid")
+            .Produces<Grid>(StatusCodes.Status200OK)
+            .WithOpenApi();
+
         return app;
     }
 
