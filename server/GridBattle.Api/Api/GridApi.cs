@@ -9,12 +9,14 @@ public static class GridApi
     public static WebApplication MapGridApi(this WebApplication app)
     {
         app.MapGet("/api/grids", GetGrids)
+            .AllowAnonymous()
             .WithName("getGrids")
             .WithDescription("Get grids, paginated and ordered by datetime descending")
             .Produces<List<Grid>>(StatusCodes.Status200OK)
             .WithOpenApi();
 
         app.MapGet("/api/grids/random", GetRandomGrid)
+            .AllowAnonymous()
             .WithName("getRandomGrid")
             .WithDescription("Get a random Grid")
             .Produces<Grid>(StatusCodes.Status200OK)
@@ -22,6 +24,7 @@ public static class GridApi
             .WithOpenApi();
 
         app.MapGet("/api/grids/{gridId}", GetGrid)
+            .AllowAnonymous()
             .WithName("getGridById")
             .WithDescription("Get a Grid by its ID")
             .Produces<Grid>(StatusCodes.Status200OK)
@@ -29,14 +32,9 @@ public static class GridApi
             .WithOpenApi();
 
         app.MapPost("/api/grids", CreateGrid)
+            .AllowAnonymous()
             .WithName("createGrid")
             .WithDescription("Create a new Grid")
-            .Produces<Grid>(StatusCodes.Status200OK)
-            .WithOpenApi();
-
-        app.MapGet("/api/grids/{gridId}/leaderboards/{leaderboardId}", CreateGrid)
-            .WithName("getGridLeaderboardById")
-            .WithDescription("Gets the specified Leaderboard for the specified Grid")
             .Produces<Grid>(StatusCodes.Status200OK)
             .WithOpenApi();
 

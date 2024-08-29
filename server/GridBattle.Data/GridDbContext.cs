@@ -9,6 +9,7 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Grid> Grids => Set<Grid>();
     public DbSet<TimerBattleRoom> TimerBattleRooms => Set<TimerBattleRoom>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,6 +53,12 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
         });
 
         timerBattleRoom.HasOne(x => x.Grid).WithMany().HasForeignKey(x => x.GridId).HasPrincipalKey(x => x.Id);
+
+        var user = modelBuilder.Entity<User>().ToTable("USER");
+        user.HasKey(x => x.UserId);
+        user.HasAlternateKey(x => x.Username);
+        user.Property(x => x.UserId).HasColumnName("USER_ID").HasColumnType("varchar(50)");
+        user.Property(x => x.UserId).HasColumnName("USERNAME").HasColumnType("varchar(50)");
 
         base.OnModelCreating(modelBuilder);
     }

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using GridBattle.Api;
 using GridBattle.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,7 +45,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.Services.AddHostedService<DataCleanupService>();
 
-builder.Services.AddAuthentication().AddJwtBearer();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
 var app = builder.Build();
 
@@ -56,8 +57,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseDefaultFiles().UseStaticFiles();
-app.UseAuthorization();
-app.MapGridApi().MapStatsApi().MapHub<TimerBattleHub>("/api/timerbattle/signalr");
+app.MapHub<TimerBattleHub>("/api/timerbattle/signalr");
+app.UseAuthentication();
+app.MapGridApi().MapStatsApi().MapUserApi();
 app.MapFallbackToFile("index.html");
 
 app.Run();

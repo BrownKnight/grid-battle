@@ -10,7 +10,7 @@ public static class StatsApi
 {
     public static WebApplication MapStatsApi(this WebApplication app)
     {
-        app.MapGet("/api/stats", GetStats);
+        app.MapGet("/api/stats", GetStats).AllowAnonymous();
         return app;
     }
 

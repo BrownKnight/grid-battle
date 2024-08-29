@@ -43,13 +43,13 @@ export default function Home() {
           </NavButton>
         </div>
       </div>
-      <div className="flex grow justify-center p-2">
+      <div className="flex justify-center p-2">
         <div className="grow max-w-screen-md">
           <h1 className="font-semibold text-2xl text-center my-2">Recent NYT Grids</h1>
           <ListGrids pageSize={5} source="NYT" onGridChosen={(gridId) => navigate(`/grid/${gridId}`)} />
         </div>
       </div>
-      <div className="flex grow justify-center p-2">
+      <div className="flex justify-center p-2">
         <div className="grow max-w-screen-md">
           <h1 className="font-semibold text-2xl text-center my-2">Find a Grid</h1>
           <SearchGrids pageSize={5} onGridChosen={(gridId) => navigate(`/grid/${gridId}`)} />

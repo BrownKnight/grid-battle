@@ -19,6 +19,7 @@
     "react-router-dom": "^6.26.1",
     "react-signalr": "^0.2.22",
     "underscore": "^1.13.7",
+    "use-local-storage-state": "^19.4.0",
     "use-session-storage-state": "^19.0.0"
   },
   "devDependencies": {
