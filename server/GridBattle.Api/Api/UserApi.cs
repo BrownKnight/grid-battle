@@ -38,6 +38,16 @@ public static class UserApi
         // User does not exist, create them in the system
         var newUser = new User() { UserId = userId, Username = username };
         dbContext.Users.Add(newUser);
+
+        // All users are subscribed to the GLOBAL leaderboard
+        var subscription = new LeaderboardSubscription
+        {
+            LeaderboardId = "GLOBAL",
+            IsOwner = false,
+            UserId = userId,
+            CreatedDateTime = DateTimeOffset.UtcNow,
+        };
+        dbContext.LeaderboardSubscriptions.Add(subscription);
         await dbContext.SaveChangesAsync();
         return TypedResults.Ok(newUser);
     }

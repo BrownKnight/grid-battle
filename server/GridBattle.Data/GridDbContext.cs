@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -10,6 +8,9 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Grid> Grids => Set<Grid>();
     public DbSet<TimerBattleRoom> TimerBattleRooms => Set<TimerBattleRoom>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Leaderboard> Leaderboards => Set<Leaderboard>();
+    public DbSet<LeaderboardEntry> LeaderboardEntries => Set<LeaderboardEntry>();
+    public DbSet<LeaderboardSubscription> LeaderboardSubscriptions => Set<LeaderboardSubscription>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,7 +42,6 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
         {
             _ = b.Property(x => x.Name).HasJsonPropertyName("name").IsRequired();
             _ = b.Property(x => x.IsActive).HasJsonPropertyName("isActive").IsRequired();
-            // b.Property(x => x.Scores).Metadata.SetValueComparer(new ListValueComparer<TimerBattleRoom.RoundScore>());
 
             b.OwnsMany(x => x.Scores, score => {
                 score.Property(x => x.MatchCount).HasJsonPropertyName("matchCount").IsRequired();
@@ -56,9 +56,36 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
 
         var user = modelBuilder.Entity<User>().ToTable("USER");
         user.HasKey(x => x.UserId);
-        user.HasAlternateKey(x => x.Username);
-        user.Property(x => x.UserId).HasColumnName("USER_ID").HasColumnType("varchar(50)");
-        user.Property(x => x.UserId).HasColumnName("USERNAME").HasColumnType("varchar(50)");
+        user.Property(x => x.UserId).HasColumnName("USER_ID").HasColumnType("varchar(50)").IsRequired();
+        user.Property(x => x.Username).HasColumnName("USERNAME").HasColumnType("varchar(50)").IsRequired();
+
+        var leaderboard = modelBuilder.Entity<Leaderboard>().ToTable("LEADERBOARD");
+        leaderboard.HasKey(x => x.LeaderboardId);
+        leaderboard.Property(x => x.LeaderboardId).HasColumnName("LEADERBOARD_ID").HasColumnType("varchar(6)").IsRequired();
+        leaderboard.Property(x => x.CreatedDateTime).HasColumnName("CRTD_TS").HasColumnType("timestamptz").IsRequired();
+        leaderboard.Property(x => x.Name).HasColumnName("NAME").HasColumnType("varchar(50)").IsRequired();
+
+        leaderboard.HasMany(x => x.Subscribers).WithOne(x => x.Leaderboard);
+
+        var leaderboardSubscription = modelBuilder.Entity<LeaderboardSubscription>();
+        leaderboardSubscription.HasKey(x => new { x.LeaderboardId, x.UserId });
+        leaderboardSubscription.Property(x => x.LeaderboardId).HasColumnName("LEADERBOARD_ID").HasColumnType("varchar(6)").IsRequired();
+        leaderboardSubscription.Property(x => x.CreatedDateTime).HasColumnName("CRTD_TS").HasColumnType("timestamptz").IsRequired();
+        leaderboardSubscription.Property(x => x.UserId).HasColumnName("USER_ID").HasColumnType("varchar(50)").IsRequired();
+        leaderboardSubscription.Property(x => x.IsOwner).HasColumnName("IS_OWNER").HasColumnType("boolean").IsRequired();
+
+        leaderboardSubscription.HasOne(x => x.User).WithMany(x => x.LeaderboardSubscriptions);
+
+        var leaderboardEntry = modelBuilder.Entity<LeaderboardEntry>();
+        leaderboardEntry.HasKey(x => new { x.GridId, x.UserId});
+        leaderboardEntry.Property(x => x.UserId).HasColumnName("USER_ID").HasColumnType("varchar(50)").IsRequired();
+        leaderboardEntry.Property(x => x.GridId).HasColumnName("GRID_ID").HasColumnType("varchar(16)").IsRequired();
+        leaderboardEntry.Property(x => x.CreatedDateTime).HasColumnName("CRTD_TS").HasColumnType("timestamptz").IsRequired();
+        leaderboardEntry.Property(x => x.TotalTime).HasColumnName("TOTAL_TIME").HasColumnType("interval").IsRequired();
+        leaderboardEntry.Property(x => x.Penalties).HasColumnName("PENALTIES").HasColumnType("smallint").IsRequired();
+
+        leaderboardEntry.HasOne(x => x.Grid).WithMany();
+        leaderboardEntry.HasOne(x => x.User).WithMany();
 
         base.OnModelCreating(modelBuilder);
     }

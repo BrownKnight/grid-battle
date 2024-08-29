@@ -64,6 +64,25 @@ using (var testDb = new GridDbContext(dbOptions))
     await testDb.SaveChangesAsync();
 }
 
+Console.WriteLine("Setting up global leaderboard");
+
+using (var leaderboardDb = new GridDbContext(dbOptions))
+{
+    if (!await leaderboardDb.Leaderboards.AnyAsync(x => x.LeaderboardId == "GLOBAL"))
+    {
+        leaderboardDb.Leaderboards.Add(
+            new()
+            {
+                LeaderboardId = "GLOBAL",
+                Name = "Global Leaderboard",
+                CreatedDateTime = DateTimeOffset.UtcNow,
+            }
+        );
+        Console.WriteLine("Added leaderboard GLOBAL");
+    }
+    await leaderboardDb.SaveChangesAsync();
+}
+
 Console.WriteLine("Importing NYT Connections Puzzles");
 
 using var nytDbContext = new GridDbContext(dbOptions);
@@ -120,4 +139,3 @@ await nytDbContext.SaveChangesAsync();
 
 Console.WriteLine("Import Complete");
 Console.WriteLine($"----------------");
-
