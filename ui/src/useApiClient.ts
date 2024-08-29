@@ -3,7 +3,7 @@ import { UserContext } from "./UserContext";
 import { ErrorContext } from "./ErrorContext";
 
 export default function useApiClient() {
-  const { user } = useContext(UserContext);
+  const { isLoggedIn, user, refreshToken } = useContext(UserContext);
   const { addError } = useContext(ErrorContext);
 
   const execute = async (url: string, options?: RequestInit) => {
@@ -15,9 +15,20 @@ export default function useApiClient() {
     ];
 
     try {
-      const res = await fetch(url, options);
+      let res = await fetch(url, options);
+
+      if (isLoggedIn && res.status === 403) {
+        console.log("Got a 403 from API, trying again after refreshing auth token");
+        const newToken = await refreshToken();
+        options.headers = [
+          ["Authorization", `Bearer ${newToken}`],
+          ["Content-Type", "application/json"],
+        ];
+        res = await fetch(url, options);
+      }
+
       if (!res.ok && res.status !== 404) throw new Error(`Error executing request: ${res.status}`);
-      // TODO: refresh token if res.status is 403
+
       return { res: res, json: await res.json() };
     } catch (e) {
       addError(e as string);
@@ -49,6 +60,6 @@ export default function useApiClient() {
       getLeaderboardEntryForGrid,
       createLeaderboardEntry,
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 }

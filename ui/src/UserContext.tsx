@@ -9,6 +9,7 @@ export type Props = {
   user: User | undefined;
   showLogin: () => void;
   logout: () => void;
+  refreshToken: () => Promise<string>;
 };
 
 export const UserContext = createContext<Props>({
@@ -16,6 +17,7 @@ export const UserContext = createContext<Props>({
   user: undefined,
   showLogin: () => {},
   logout: () => {},
+  refreshToken: async () => "",
 });
 
 export default function UserContextProvider({ children }: React.PropsWithChildren) {
@@ -33,8 +35,33 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
 
   const logout = () => setUser(undefined);
 
+  const refreshToken = async () => {
+    if (!user) return "";
+
+    const request = {
+      AuthFlow: "REFRESH_TOKEN_AUTH",
+      ClientId: "6q9id5vhqfocb9mc0deep4at49",
+      AuthParameters: {
+        REFRESH_TOKEN: user?.refreshToken,
+      },
+    };
+
+    const res = await fetch("https://cognito-idp.eu-west-2.amazonaws.com/", {
+      method: "POST",
+      headers: [
+        ["Content-Type", "application/x-amz-json-1.1"],
+        ["X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth"],
+      ],
+      body: JSON.stringify(request),
+    });
+
+    const json = await res.json();
+    setUser({ username: user.username, id: user.id, refreshToken: json.RefreshToken, idToken: json.IdToken });
+    return json.IdToken as string;
+  };
+
   return (
-    <UserContext.Provider value={{ user: user, isLoggedIn: isLoggedIn, showLogin: showLogin, logout: logout }}>
+    <UserContext.Provider value={{ user: user, isLoggedIn: isLoggedIn, showLogin: showLogin, logout: logout, refreshToken }}>
       {children}
 
       {isLoggedIn ? (
