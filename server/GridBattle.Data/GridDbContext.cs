@@ -63,7 +63,7 @@ public sealed class GridDbContext(DbContextOptions options) : DbContext(options)
         leaderboard.HasKey(x => x.LeaderboardId);
         leaderboard.Property(x => x.LeaderboardId).HasColumnName("LEADERBOARD_ID").HasColumnType("varchar(6)").IsRequired();
         leaderboard.Property(x => x.CreatedDateTime).HasColumnName("CRTD_TS").HasColumnType("timestamptz").IsRequired();
-        leaderboard.Property(x => x.Name).HasColumnName("NAME").HasColumnType("varchar(50)").IsRequired();
+        leaderboard.Property(x => x.Name).HasColumnName("NAME").HasColumnType("varchar(64)").IsRequired();
 
         leaderboard.HasMany(x => x.Subscribers).WithOne(x => x.Leaderboard);
 

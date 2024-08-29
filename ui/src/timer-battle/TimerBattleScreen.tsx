@@ -9,6 +9,7 @@ import { TimerBattlePlayer } from "./Models";
 import { HiOutlineEllipsisHorizontal } from "react-icons/hi2";
 import SearchGrids from "../grid/SearchGrids";
 import { TbPlugConnectedX } from "react-icons/tb";
+import TimeDisplay from "../common/TimeDisplay";
 
 export default function TimerBattleScreen() {
   const { battle, username, sendMessage, setBattle, setRoomId } = useContext(TimerBattleContext);
@@ -155,7 +156,9 @@ function TimerBattleScores() {
         <Table.HeadCell className="p-2">Pos</Table.HeadCell>
         <Table.HeadCell className="p-2">Player</Table.HeadCell>
         {_.range(battle!.roundNumber).map((round) => (
-          <Table.HeadCell className="p-2 min-w-20" key={round}>Round {round + 1}</Table.HeadCell>
+          <Table.HeadCell className="p-2 min-w-20" key={round}>
+            Round {round + 1}
+          </Table.HeadCell>
         ))}
         <Table.HeadCell className="p-2">Total</Table.HeadCell>
         {isHost && <Table.HeadCell className="p-2"></Table.HeadCell>}
@@ -164,7 +167,7 @@ function TimerBattleScores() {
         {battle!.players
           .sort((a, b) => calculateTotalTime(a) - calculateTotalTime(b))
           .map((player, i) => {
-            const totalTime = new Date(calculateTotalTime(player));
+            const totalTime = calculateTotalTime(player);
             const totalPenalties = calculatePenalties(player);
             return (
               <Table.Row key={i}>
@@ -179,21 +182,14 @@ function TimerBattleScores() {
                   )}
                 </Table.Cell>
                 {player.scores.map((score, j) => {
-                  const time = new Date(score.time);
                   return (
                     <Table.Cell key={j} className="font-mono p-2">
-                      <span>
-                        {time.getUTCMinutes()}:{time.getUTCSeconds().toString(10).padStart(2, "0")}
-                      </span>
-                      {score.penalties > 0 && <span className="ml-1 font-semibold text-red-500">+{score.penalties * 10}s</span>}
+                      <TimeDisplay totalTime={score.time} penalties={score.penalties} />
                     </Table.Cell>
                   );
                 })}
                 <Table.Cell className="font-mono p-2">
-                  <span>
-                    {totalTime.getUTCMinutes()}:{totalTime.getUTCSeconds().toString(10).padStart(2, "0")}
-                  </span>
-                  {totalPenalties > 0 && <span className="ml-1 font-semibold text-red-500">+{totalPenalties * 10}s</span>}
+                  <TimeDisplay totalTime={totalTime} penalties={totalPenalties} />
                 </Table.Cell>
                 {isHost && (
                   <Table.Cell className="p-2">

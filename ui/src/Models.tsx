@@ -13,3 +13,17 @@ export type Category = {
   name: string;
   answers: string[];
 };
+
+export type LeaderboardEntry = {
+  gridId: string;
+  userId: string;
+  // milliseconds
+  totalTime: number;
+  penalties: number;
+  user: User;
+};
+
+export type User = {
+  userId: string;
+  username: string;
+};

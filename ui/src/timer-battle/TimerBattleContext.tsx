@@ -4,6 +4,7 @@ import useSessionStorageState from "use-session-storage-state";
 import { createSignalRContext } from "react-signalr";
 import { Context, Hub } from "react-signalr/lib/signalr/types";
 import { ErrorContext } from "../ErrorContext";
+import { UserContext } from "../UserContext";
 
 type Props = {
   roomId: string;
@@ -22,8 +23,9 @@ export const TimerBattleContext = createContext<Props>({} as Props);
 const TimerBattleSignalRContext = createSignalRContext();
 
 export function TimerBattleContextProvider({ children }: React.PropsWithChildren) {
+  const { user } = useContext(UserContext);
   const [roomId, setRoomId] = useSessionStorageState<string>("roomId", { defaultValue: "" });
-  const [username, setUsername] = useSessionStorageState<string>("username", { defaultValue: "" });
+  const [username, setUsername] = useSessionStorageState<string>("username", { defaultValue: user?.username?.toUpperCase() ?? "" });
   const [battle, setBattle] = useState<TimerBattleRoom | undefined>(undefined);
   const { addError } = useContext(ErrorContext);
 

@@ -59,7 +59,7 @@ if (app.Environment.IsDevelopment())
 app.UseDefaultFiles().UseStaticFiles();
 app.MapHub<TimerBattleHub>("/api/timerbattle/signalr");
 app.UseAuthentication();
-app.MapGridApi().MapStatsApi().MapUserApi();
+app.MapGridApi().MapStatsApi().MapUserApi().MapLeaderboardApi();
 app.MapFallbackToFile("index.html");
 
 app.Run();

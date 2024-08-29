@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GridBattle.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -69,13 +70,22 @@ public static class GridApi
         return TypedResults.Ok(grids);
     }
 
+    private sealed record GetGridDto(
+        string Id,
+        string Name,
+        GridSource Source,
+        DateTimeOffset CreatedDateTime,
+        string CreatedBy,
+        List<Category> Categories,
+        LeaderboardEntry? LeaderboardEntry
+    );
+
     private static async Task<IResult> GetGrid(
         [FromRoute] string gridId,
         [FromServices] GridDbContext dbContext
     )
     {
         var grid = await dbContext.Grids.Where(x => x.Id == gridId).FirstOrDefaultAsync();
-        ;
         return grid is null ? Results.NotFound() : TypedResults.Ok(grid);
     }
 

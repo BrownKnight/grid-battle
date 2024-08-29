@@ -22,11 +22,8 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
     if (selected.length >= 4) {
       const matchedCategory = grid.categories.find((x) => x.answers.every((x) => selected.includes(x)));
       if (matchedCategory) {
-        setMatchedCategories((m) => {
-          m.push(matchedCategory);
-          onCorrect(matchedCategory, m.length);
-          return [...m];
-        });
+        onCorrect(matchedCategory, matchedCategories.length + 1);
+        setMatchedCategories((m) => [...m, matchedCategory]);
 
         setRemaining((r) => {
           r = _.reject(r, (r) => matchedCategory.answers.includes(r));
@@ -74,9 +71,7 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
       {_.chunk(remaining, 4).map((words, i) => (
         <Row key={i}>
           {words.map((word, j) => {
-            const color = selected.includes(word)
-              ? "bg-teal-500 hover:bg-teal-400 active:bg-teal-300"
-              : "bg-gray-200 hover:bg-teal-300 active:bg-teal-400";
+            const color = selected.includes(word) ? "bg-teal-500 active:bg-teal-300" : "bg-gray-200 active:bg-teal-400";
             return (
               <button
                 key={j}

@@ -38,7 +38,7 @@ export default function TimedGrid({
         className={`self-center ${interactive ? "" : "text-xs"}`}
         timeSince={startTime}
         staticTime={staticTime}
-        penaltyTime={penalties * 10 * 1000}
+        penalties={penalties}
       />
     </div>
   );

@@ -1,9 +1,9 @@
-import { TimerBattleContext, TimerBattleContextProvider } from "./TimerBattleContext";
+import { TimerBattleContext, TimerBattleContextProvider } from "../timer-battle/TimerBattleContext";
 import { Button, ButtonGroup, Label, TextInput } from "flowbite-react";
 import { useContext, useEffect, useState } from "react";
-import TimerBattleScreen from "./TimerBattleScreen";
+import TimerBattleScreen from "../timer-battle/TimerBattleScreen";
 import { useMatch, useNavigate } from "react-router-dom";
-import { TimerBattleRoom } from "./Models";
+import { TimerBattleRoom } from "../timer-battle/Models";
 import { ErrorContext } from "../ErrorContext";
 
 export default function CreateJoinTimerBattle() {

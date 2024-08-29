@@ -1,18 +1,18 @@
 import { Button, ButtonGroup, FloatingLabel, Modal } from "flowbite-react";
-import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import useApiClient from "./useApiClient";
 
 export type User = { id: string; username: string; idToken: string; refreshToken: string };
 export type Props = {
-  isLoggedIn: () => boolean;
+  isLoggedIn: boolean;
   user: User | undefined;
   showLogin: () => void;
   logout: () => void;
 };
 
 export const UserContext = createContext<Props>({
-  isLoggedIn: () => false,
+  isLoggedIn: false,
   user: undefined,
   showLogin: () => {},
   logout: () => {},
@@ -21,8 +21,11 @@ export const UserContext = createContext<Props>({
 export default function UserContextProvider({ children }: React.PropsWithChildren) {
   const [user, setUser] = useLocalStorageState<User | undefined>("user", { defaultValue: undefined });
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const isLoggedIn = () => !!user;
+  useEffect(() => {
+    setIsLoggedIn(!!user);
+  }, [user]);
 
   const showLogin = () => {
     setIsLoginOpen(true);
@@ -34,7 +37,7 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
     <UserContext.Provider value={{ user: user, isLoggedIn: isLoggedIn, showLogin: showLogin, logout: logout }}>
       {children}
 
-      {isLoggedIn() ? (
+      {isLoggedIn ? (
         <UserModal show={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       ) : (
         <LoginModal show={isLoginOpen} onClose={() => setIsLoginOpen(false)} setUser={setUser} />
@@ -117,8 +120,8 @@ function LoginModal({
           const refreshToken = res.AuthenticationResult.RefreshToken;
 
           // Check the user is registered and retrieve the user info
-          apiClient.getCurrentProfile(idToken).then((res) => {
-            setUser({ id: res.userId, username: res.username, idToken: idToken, refreshToken: refreshToken });
+          apiClient.getCurrentProfile(idToken).then(({ json }) => {
+            setUser({ id: json.userId, username: json.username, idToken: idToken, refreshToken: refreshToken });
             onClose();
           });
         } else {
@@ -209,6 +212,7 @@ function LoginModal({
           autoComplete="name"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          maxLength={64}
           required
         />
         {type === "register" && (
@@ -223,6 +227,7 @@ function LoginModal({
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            maxLength={200}
             required
           />
         )}

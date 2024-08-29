@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import ErrorContextProvider from "./ErrorContext";
-import UserContextProvider, { UserContext } from "./UserContext";
+import ErrorContextProvider from "../ErrorContext";
+import UserContextProvider, { UserContext } from "../UserContext";
 import { RxAvatar } from "react-icons/rx";
 import { useContext } from "react";
 
