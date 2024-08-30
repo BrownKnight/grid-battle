@@ -122,7 +122,7 @@ export default function TimerBattleScreen() {
       <div className="flex grow justify-center p-2">
         <div className="grow max-w-screen-md">
           <h1 className="font-semibold text-2xl text-center my-2">Recent NYT Grids</h1>
-          <SearchGrids pageSize={5} onGridChosen={(gridId) => selectGrid(`/grid/${gridId}`)} />
+          <SearchGrids pageSize={5} onGridChosen={(gridId) => selectGrid(gridId)} />
         </div>
       </div>
     </div>

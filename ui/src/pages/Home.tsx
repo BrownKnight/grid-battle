@@ -31,13 +31,13 @@ export default function Home() {
               Battle Mode
             </span>
           </NavButton>
-          <NavButton to="/grid/random" color="teal">
+          <NavButton to="/grids/random" color="teal">
             <span className="flex justify-center gap-2">
               <BiShuffle className="h-8" />
               Play a Random Grid
             </span>
           </NavButton>
-          <NavButton to="/grid/create" color="green">
+          <NavButton to="/grids/create" color="green">
             <span className="flex justify-center gap-2">
               <LuPlus className="h-8" />
               Create a Grid
@@ -49,14 +49,14 @@ export default function Home() {
       <div className="flex justify-center p-2">
         <div className="grow max-w-screen-md">
           <h1 className="font-semibold text-2xl text-center my-2">Recent NYT Grids</h1>
-          <ListGrids pageSize={5} source="NYT" onGridChosen={(gridId) => navigate(`/grid/${gridId}`)} />
+          <ListGrids pageSize={5} source="NYT" onGridChosen={(gridId) => navigate(`/grids/${gridId}`)} />
         </div>
       </div>
 
       <div className="flex justify-center p-2">
         <div className="grow max-w-screen-md">
           <h1 className="font-semibold text-2xl text-center my-2">Find a Grid</h1>
-          <SearchGrids pageSize={5} onGridChosen={(gridId) => navigate(`/grid/${gridId}`)} />
+          <SearchGrids pageSize={5} onGridChosen={(gridId) => navigate(`/grids/${gridId}`)} />
         </div>
       </div>
 
@@ -95,7 +95,7 @@ export default function Home() {
           <h2 className="font-semibold text-xl mt-8 mb-2">Create your own Grid</h2>
           <p>
             You can{" "}
-            <Link className="text-sky-400 hover:text-sky-600" to="/grid/create">
+            <Link className="text-sky-400 hover:text-sky-600" to="/grids/create">
               Create your own Grid
             </Link>{" "}
             and have it be played anyone in the community.
