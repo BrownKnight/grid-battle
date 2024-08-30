@@ -104,10 +104,8 @@ export default function TimerBattleScreen() {
   // Battle is not in progress, need to pick a grid
   return (
     <div className="flex flex-col gap-4 m-4">
-      <div className="flex grow justify-center p-2">
-        <div className="flex flex-col gap-2 overflow-x-auto">
-          <TimerBattleScores />
-        </div>
+      <div className="flex grow justify-center my-2 overflow-visible overflow-x-auto">
+        <TimerBattleScores />
       </div>
       <div className="flex grow justify-center p-2">
         <div className="flex flex-col  gap-2 grow max-w-screen-md">
@@ -123,6 +121,10 @@ export default function TimerBattleScreen() {
           <SearchGrids pageSize={5} onGridChosen={(gridId) => selectGrid(gridId)} />
         </div>
       </div>
+      <div className="self-center text-lg font-semibold">{isHost && <h1>Host Controls</h1>}</div>
+      <div className="flex grow justify-center pb-2">
+        <div className="grow max-w-screen-md">{isHost && <HostControls />}</div>
+      </div>
     </div>
   );
 }
@@ -136,20 +138,10 @@ function calculatePenalties(player: TimerBattlePlayer) {
 }
 
 function TimerBattleScores() {
-  const { battle, username, sendMessage } = useContext(TimerBattleContext);
-
-  const isHost = battle?.players.find((x) => x.name.toUpperCase() === username.toUpperCase())?.isHost === true;
-
-  const kickPlayer = (playerName: string) => {
-    sendMessage("KickPlayer", playerName);
-  };
-
-  const markPlayerAsDisconnected = (playerName: string) => {
-    sendMessage("MarkPlayerAsDisconnected", playerName);
-  };
+  const { battle } = useContext(TimerBattleContext);
 
   return (
-    <Table hoverable>
+    <Table className="grow">
       <Table.Head>
         <Table.HeadCell className="p-2">Pos</Table.HeadCell>
         <Table.HeadCell className="p-2">Player</Table.HeadCell>
@@ -159,7 +151,6 @@ function TimerBattleScores() {
           </Table.HeadCell>
         ))}
         <Table.HeadCell className="p-2">Total</Table.HeadCell>
-        {isHost && <Table.HeadCell className="p-2"></Table.HeadCell>}
       </Table.Head>
       <Table.Body>
         {battle!.players
@@ -185,27 +176,6 @@ function TimerBattleScores() {
                 <Table.Cell className="font-mono p-2">
                   <TimeDisplay totalTime={totalTime} penalties={totalPenalties} />
                 </Table.Cell>
-                {isHost && (
-                  <Table.Cell className="p-2">
-                    <Popover
-                      content={
-                        <div className="w-56 flex flex-col p-2">
-                          <Button size="xs" color="yellow" onClick={() => markPlayerAsDisconnected(player.name)}>
-                            Mark as Disconnected
-                          </Button>
-                          <span className="mt-1 text-xs text-gray-400">If a player is unable to rejoin, mark them as disconnected</span>
-                          <Button className="mt-2" size="xs" color="failure" onClick={() => kickPlayer(player.name)}>
-                            Kick Player
-                          </Button>
-                        </div>
-                      }
-                    >
-                      <div className="text-center">
-                        <HiOutlineEllipsisHorizontal className="text-center" size="20" />
-                      </div>
-                    </Popover>
-                  </Table.Cell>
-                )}
               </Table.Row>
             );
           })}
@@ -217,6 +187,64 @@ function TimerBattleScores() {
             </div>
           </Table.Cell>
         </Table.Row>
+      </Table.Body>
+    </Table>
+  );
+}
+
+function HostControls() {
+  const { battle, sendMessage } = useContext(TimerBattleContext);
+
+  const kickPlayer = (playerName: string) => {
+    sendMessage("KickPlayer", playerName);
+  };
+
+  const markPlayerAsDisconnected = (playerName: string) => {
+    sendMessage("MarkPlayerAsDisconnected", playerName);
+  };
+
+  return (
+    <Table className="grow">
+      <Table.Head>
+        <Table.HeadCell className="p-2">Player</Table.HeadCell>
+        <Table.HeadCell className="p-2">Tags</Table.HeadCell>
+        <Table.HeadCell className="p-2"></Table.HeadCell>
+      </Table.Head>
+      <Table.Body>
+        {battle!.players
+          .sort((a, b) => calculateTotalTime(a) - calculateTotalTime(b))
+          .map((player, i) => {
+            return (
+              <Table.Row key={i}>
+                <Table.Cell className="p-2">
+                  <span>{player.name}</span>
+                </Table.Cell>
+                <Table.Cell className="inline-flex gap-2 p-2 items-center">
+                  {player.isHost && <Badge>Host</Badge>}
+                  {!player.isActive && <Badge color="warning">Disconnected</Badge>}
+                </Table.Cell>
+                <Table.Cell className="p-2 text-center">
+                  <Popover
+                    content={
+                      <div className="w-56 flex flex-col p-2">
+                        <Button size="xs" color="yellow" onClick={() => markPlayerAsDisconnected(player.name)}>
+                          Mark as Disconnected
+                        </Button>
+                        <span className="mt-1 text-xs text-gray-400">If a player is unable to rejoin, mark them as disconnected</span>
+                        <Button className="mt-2" size="xs" color="failure" onClick={() => kickPlayer(player.name)}>
+                          Kick Player
+                        </Button>
+                      </div>
+                    }
+                  >
+                    <div className="flex justify-end">
+                      <HiOutlineEllipsisHorizontal size="20" />
+                    </div>
+                  </Popover>
+                </Table.Cell>
+              </Table.Row>
+            );
+          })}
       </Table.Body>
     </Table>
   );
