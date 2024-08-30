@@ -33,7 +33,17 @@ export function TimerBattleContextProvider({ children }: React.PropsWithChildren
     methodName,
     ...args
   ) => {
-    return TimerBattleSignalRContext.invoke(methodName, ...args)?.catch((reason) => addError(reason.toString()));
+    return TimerBattleSignalRContext.invoke(methodName, ...args)
+      ?.then((res) => {
+        if ("resource" in res && res.resource) return res.resource;
+        if ("error" in res) {
+          console.error(`received error from SignalR endpoint ${methodName}`, res.error);
+          addError(res.error.message);
+        }
+      })
+      .catch((reason) => {
+        addError(reason.toString());
+      });
   };
 
   return (

@@ -116,7 +116,9 @@ export default function LocalPlayGrid() {
       <div className="flex flex-col grow">
         <div className="flex grow justify-center p-4">
           <div className="flex flex-col grow max-w-screen-md mx-auto">
-            <GridTitle grid={grid} />
+            <div className="flex flex-row">
+              <GridTitle grid={grid} />
+            </div>
 
             <div className="mt-4 grow">
               <SimpleGrid grid={grid} matchedCount={0} />
