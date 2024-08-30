@@ -10,10 +10,8 @@ export default function SimpleGrid({ grid, matchedCount, title }: { grid: Grid; 
       {title && <h1 className="self-center font-semibold text-sm text-black dark:text-gray-200">{title}</h1>}
       {_.range(0, matchedCount).map((i) => {
         return (
-          <div key={i} className="flex flex-row gap-2 aspect-[6/1]">
-            {_.range(columnCount).map((j) => (
-              <div key={j} className="bg-green-700 grow rounded"></div>
-            ))}
+          <div key={i} className="flex flex-row aspect-[6/1] bg-green-700 rounded">
+
           </div>
         );
       })}

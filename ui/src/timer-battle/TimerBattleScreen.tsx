@@ -74,9 +74,8 @@ export default function TimerBattleScreen() {
             {battle.players
               .filter((x) => x.name !== username)
               .map((player) => (
-                <div className="w-36">
+                <div key={player.name} className="w-36">
                   <TimedGrid
-                    key={player.name}
                     grid={battle.grid!}
                     startTime={Date.parse(battle.roundStartedAt!)}
                     staticTime={player.scores[battle.roundNumber]?.time}

@@ -55,19 +55,10 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
 
       {matchedCategories.map((category, i) => (
         <Row key={i}>
-          {category.answers.map((word, j) => {
-            const color = "bg-green-700 text-white";
-            return (
-              <div
-                key={j}
-                className={`flex-1 grow rounded-lg content-center font-bold ${
-                  word.length > 7 ? "text-[0.6rem]" : "text-sm"
-                } md:text-lg ${color}`}
-              >
-                {word}
-              </div>
-            );
-          })}
+          <div className="flex-1 grow rounded-lg content-center bg-green-700 text-white">
+            <p className="font-bold text-lg">{category.name}</p>
+            <p className="font-normal text-sm">{category.answers.join(" | ")}</p>
+          </div>
         </Row>
       ))}
       {_.chunk(remaining, 4).map((words, i) => (
