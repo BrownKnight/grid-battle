@@ -38,16 +38,23 @@ export default function LocalPlayGrid() {
       return;
     }
 
+    if (gridId === grid?.id) return;
+
     setLoading(true);
     apiClient.getGrid(gridId).then(({ res, json }) => {
       if (res.status !== 200) {
         addError("Grid not found");
         return;
       }
-      if (json) setGrid(json);
+      if (json) {
+        setGrid((x) => {
+          // Only update if the grid is actually different
+          return x?.id === json.id ? x : json;
+        });
+      }
       setLoading(false);
     });
-  }, [gridId, addError, apiClient]);
+  }, [gridId, grid?.id, addError, apiClient]);
 
   useEffect(() => {
     // Reset the state when the grid changes

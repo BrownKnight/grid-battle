@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { TimerBattleContext } from "./TimerBattleContext";
-import { Badge, Button, Popover, Table } from "flowbite-react";
+import { Badge, Button, Clipboard, Popover, Table } from "flowbite-react";
 import _ from "underscore";
 import TimedGrid from "../grid/TimedGrid";
 import { Category } from "../Models";
@@ -217,7 +217,10 @@ function TimerBattleScores() {
           })}
         <Table.Row>
           <Table.Cell className="text-center" colSpan={99}>
-            Room Code: <span className="font-mono font-semibold">{battle?.roomId}</span>
+            <div className="relative w-52 mx-auto">
+              Room Code: <span className="font-mono font-semibold">{battle!.roomId}</span>
+              <Clipboard.WithIcon valueToCopy={battle!.roomId} />
+            </div>
           </Table.Cell>
         </Table.Row>
       </Table.Body>
