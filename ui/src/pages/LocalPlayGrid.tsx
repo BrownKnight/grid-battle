@@ -38,8 +38,6 @@ export default function LocalPlayGrid() {
       return;
     }
 
-    if (grid?.id === gridId) return;
-
     setLoading(true);
     apiClient.getGrid(gridId).then(({ res, json }) => {
       if (res.status !== 200) {
@@ -48,7 +46,7 @@ export default function LocalPlayGrid() {
       }
       if (json) setGrid(json);
     });
-  }, [gridId, grid?.id, addError, apiClient]);
+  }, [gridId, addError, apiClient]);
 
   useEffect(() => {
     // Reset the state when the grid changes

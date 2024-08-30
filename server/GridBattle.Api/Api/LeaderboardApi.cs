@@ -58,7 +58,7 @@ public static class LeaderboardApi
             x.UserId == userId && x.GridId == gridId
         );
 
-        return Results.Ok(entry);
+        return entry is not null ? TypedResults.Ok(entry) : Results.NotFound();
     }
 
     private static async Task<IResult> GetLeaderboards(

@@ -28,8 +28,8 @@ export default function useApiClient() {
       }
 
       if (!res.ok && res.status !== 404) throw new Error(`Error executing request: ${res.status}`);
-
-      return { res: res, json: await res.json() };
+      const json = res.status === 404 ? undefined : await res.json();
+      return { res, json };
     } catch (e) {
       addError(e as string);
       throw e;
