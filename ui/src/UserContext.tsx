@@ -66,7 +66,7 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
 
   const onClose = () => {
     setIsLoginOpen(false);
-    navigate("/");
+    navigate("#");
   };
 
   return (
