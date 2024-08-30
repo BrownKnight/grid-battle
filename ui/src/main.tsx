@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import LocalPlayGrid from "./pages/LocalPlayGrid";
 import CreateJoinTimerBattle from "./pages/CreateJoinTimerBattle";
 import CreateGrid from "./pages/CreateGrid";
+import GridLeaderboard from "./pages/GridLeaderboard";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -15,6 +16,7 @@ const router = createBrowserRouter(
       <Route path="/battle" element={<CreateJoinTimerBattle />} />
       <Route path="/grids/create" element={<CreateGrid />} />
       <Route path="/grids/:gridId" element={<LocalPlayGrid />} />
+      <Route path="/grids/:gridId/leaderboard" element={<GridLeaderboard />} />
     </Route>
   )
 );

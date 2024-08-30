@@ -38,6 +38,8 @@ export default function LocalPlayGrid() {
       return;
     }
 
+    if (grid?.id === gridId) return;
+
     setLoading(true);
     apiClient.getGrid(gridId).then(({ res, json }) => {
       if (res.status !== 200) {
@@ -45,13 +47,17 @@ export default function LocalPlayGrid() {
         return;
       }
       if (json) setGrid(json);
-      setLoading(false);
-      setStartTime(Date.now());
-      setStaticTime(undefined);
-      setPenalties(0);
-      setPlaying(false);
     });
-  }, [gridId, addError]);
+  }, [gridId, grid?.id, addError, apiClient]);
+
+  useEffect(() => {
+    // Reset the state when the grid changes
+    setLoading(false);
+    setStartTime(Date.now());
+    setStaticTime(undefined);
+    setPenalties(0);
+    setPlaying(false);
+  }, [gridId]);
 
   useEffect(() => {
     if (!gridId || !isLoggedIn) {
@@ -59,8 +65,8 @@ export default function LocalPlayGrid() {
       return;
     }
 
-    apiClient.getLeaderboardEntryForGrid(gridId).then(({ res, json }) => {
-      if (res.status !== 200) {
+    apiClient.getMyLeaderboardEntryForGrid(gridId).then(({ res, json }) => {
+      if (!res.ok) {
         return;
       }
       setLeaderboardEntry(json);
@@ -116,9 +122,15 @@ export default function LocalPlayGrid() {
               </span>
             )}
 
-            <Button className="my-2" onClick={startGame}>Play Grid</Button>
+            <Button className="my-2" onClick={startGame}>
+              Play Grid
+            </Button>
 
-            {isLoggedIn && <Link to={`/grids/${gridId}/leaderboard`}><Button color="dark" fullSized>View Leaderboard</Button></Link>}
+            <Link to={`/grids/${gridId}/leaderboard`}>
+              <Button color="dark" fullSized>
+                View Leaderboard
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -126,11 +138,12 @@ export default function LocalPlayGrid() {
   }
 
   const completedSection = (
-    <div className="flex flex-col gap-2 text-center mb-4">
+    <div className="flex flex-col gap-2 text-center mb-4 mt-2">
       <span>
         Well done! You completed the grid in <TimeDisplay totalTime={staticTime!} penalties={penalties} />, with a total of{" "}
         <span className="text-red-500">{penalties ?? 0}</span> mistakes.
       </span>
+
       {!isLoggedIn && (
         <span>
           <a href="#" onClick={showLogin} className="mx-1 text-sky-400 hover:text-sky-600">
@@ -138,6 +151,16 @@ export default function LocalPlayGrid() {
           </a>
           to record this time on the leaderboard
         </span>
+      )}
+
+      {leaderboardEntry && (
+        <>
+          <span>
+            Your leaderboard time: <TimeDisplay totalTime={leaderboardEntry.totalTime} penalties={leaderboardEntry.penalties} /> Recorded
+            at:{" "}
+            {new Date(Date.parse(leaderboardEntry.createdDateTime)).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+          </span>
+        </>
       )}
     </div>
   );
@@ -156,7 +179,11 @@ export default function LocalPlayGrid() {
             penalties={penalties}
           />
           {staticTime && completedSection}
-          {isLoggedIn && <Link to=""><Button>View Leaderboard</Button></Link>}
+          <Link to={`/grids/${gridId}/leaderboard`}>
+            <Button color="dark" fullSized>
+              View Leaderboard
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

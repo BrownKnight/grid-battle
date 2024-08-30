@@ -14,13 +14,19 @@ export type Category = {
   answers: string[];
 };
 
+export type Leaderboard = {
+  leaderboardId: string;
+  name: string;
+};
+
 export type LeaderboardEntry = {
   gridId: string;
   userId: string;
+  username: string;
   // milliseconds
   totalTime: number;
   penalties: number;
-  user: User;
+  createdDateTime: string;
 };
 
 export type User = {

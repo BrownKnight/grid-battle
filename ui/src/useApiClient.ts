@@ -3,7 +3,7 @@ import { UserContext } from "./UserContext";
 import { ErrorContext } from "./ErrorContext";
 
 export default function useApiClient() {
-  const { isLoggedIn, user, refreshToken } = useContext(UserContext);
+  const { user, refreshToken } = useContext(UserContext);
   const { addError } = useContext(ErrorContext);
 
   const execute = async (url: string, options?: RequestInit) => {
@@ -17,8 +17,8 @@ export default function useApiClient() {
     try {
       let res = await fetch(url, options);
 
-      if (isLoggedIn && res.status === 403) {
-        console.log("Got a 403 from API, trying again after refreshing auth token");
+      if (user?.idToken && res.status === 403) {
+        console.log("Got a 403 from API, refreshing token before trying again");
         const newToken = await refreshToken();
         options.headers = [
           ["Authorization", `Bearer ${newToken}`],
@@ -44,8 +44,16 @@ export default function useApiClient() {
     return await execute(`/api/grids/${gridId}`);
   };
 
-  const getLeaderboardEntryForGrid = async (gridId: string) => {
+  const getMyLeaderboardEntryForGrid = async (gridId: string) => {
     return await execute(`/api/grids/${gridId}/leaderboards/entries/me`);
+  };
+
+  const getMySubcribedLeaderboards = async () => {
+    return await execute(`/api/users/me/leaderboards`);
+  };
+
+  const getLeaderboardEntriesForGrid = async (gridId: string, leaderboardId: string, offset: number, limit: number) => {
+    return await execute(`/api/grids/${gridId}/leaderboards/${leaderboardId}/entries?offset=${offset}&limit=${limit}`);
   };
 
   const createLeaderboardEntry = async (gridId: string, totalTime: number, penalties: number) => {
@@ -57,9 +65,11 @@ export default function useApiClient() {
     return {
       getCurrentProfile,
       getGrid,
-      getLeaderboardEntryForGrid,
+      getMyLeaderboardEntryForGrid,
       createLeaderboardEntry,
+      getMySubcribedLeaderboards,
+      getLeaderboardEntriesForGrid,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user?.idToken]);
 }

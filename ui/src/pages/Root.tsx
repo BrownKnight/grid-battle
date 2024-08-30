@@ -3,6 +3,8 @@ import ErrorContextProvider from "../ErrorContext";
 import UserContextProvider, { UserContext } from "../UserContext";
 import { RxAvatar } from "react-icons/rx";
 import { useContext } from "react";
+import { Dropdown } from "flowbite-react";
+import { HiLogout } from "react-icons/hi";
 
 export default function Root() {
   const navigate = useNavigate();
@@ -27,12 +29,33 @@ export default function Root() {
 }
 
 function Avatar() {
-  const { showLogin, user } = useContext(UserContext);
+  const { isLoggedIn, showLogin, user, logout } = useContext(UserContext);
+
+  if (isLoggedIn)
+    return (
+      <div className="absolute right-4">
+        <Dropdown
+          inline
+          label={
+            <div className="inline-flex gap-1">
+              <RxAvatar size={24} />
+              <span className="max-w-16 truncate">{user?.username}</span>
+            </div>
+          }
+        >
+          <Dropdown.Header>
+            <span>Logged in as: </span>
+            <span className="font-semibold">{user?.username}</span>
+          </Dropdown.Header>
+          <Dropdown.Item icon={HiLogout} onClick={logout}>Logout</Dropdown.Item>
+        </Dropdown>
+      </div>
+    );
 
   return (
     <a href="#" className="absolute right-4 inline-flex items-center gap-1" onClick={showLogin}>
       <RxAvatar size={20} />
-      { user?.username ? <span className="max-w-16 truncate">{user.username}</span> : <span>Login</span>}
+      <span>Login</span>
     </a>
   );
 }

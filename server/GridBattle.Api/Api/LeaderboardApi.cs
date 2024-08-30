@@ -22,6 +22,13 @@ public static class LeaderboardApi
             .Produces<LeaderboardEntry>(StatusCodes.Status200OK)
             .WithOpenApi();
 
+        app.MapGet("/api/users/me/leaderboards", GetLeaderboards)
+            .WithName("getLeaderboards")
+            .WithDescription("Gets all the subscribed leaderboards")
+            .Produces<List<Dto.Leaderboard.Get>>(StatusCodes.Status200OK)
+            .Produces<List<Dto.Leaderboard.Get>>(StatusCodes.Status404NotFound)
+            .WithOpenApi();
+
         app.MapGet(
                 "/api/grids/{gridId}/leaderboards/{leaderboardId}/entries",
                 GetLeaderboardEntries
@@ -30,8 +37,8 @@ public static class LeaderboardApi
             .WithDescription(
                 "Gets all the relevant leaderboard entries for the specified leaderboard"
             )
-            .Produces<List<LeaderboardEntry>>(StatusCodes.Status200OK)
-            .Produces<List<LeaderboardEntry>>(StatusCodes.Status404NotFound)
+            .Produces<List<Dto.Leaderboard.GetEntry>>(StatusCodes.Status200OK)
+            .Produces<List<Dto.Leaderboard.GetEntry>>(StatusCodes.Status404NotFound)
             .WithOpenApi();
 
         return app;
@@ -54,6 +61,29 @@ public static class LeaderboardApi
         return Results.Ok(entry);
     }
 
+    private static async Task<IResult> GetLeaderboards(
+        [FromServices] GridDbContext dbContext,
+        ClaimsPrincipal user
+    )
+    {
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // Unauthenticated users just get the GLOBAL leaderboard
+        var leaderboards = userId is null
+            ? await dbContext.Leaderboards.Where(x => x.LeaderboardId == "GLOBAL").ToListAsync()
+            : await dbContext
+                .LeaderboardSubscriptions.AsNoTracking()
+                .Include(x => x.Leaderboard)
+                .Where(x => x.UserId == userId)
+                .Select(x => x.Leaderboard!)
+                .OrderByDescending(x => x!.CreatedDateTime)
+                .ToListAsync();
+
+        return Results.Ok(
+            leaderboards.Select(x => new Dto.Leaderboard.Get(x!.LeaderboardId, x.Name)).ToList()
+        );
+    }
+
     private static async Task<IResult> GetLeaderboardEntries(
         [FromRoute] string gridId,
         [FromRoute] string leaderboardId,
@@ -70,13 +100,22 @@ public static class LeaderboardApi
 
         var entries = await dbContext
             .LeaderboardEntries.AsNoTracking()
+            .Include(x => x.User)
             .Where(x => x.GridId == gridId && subscribers.Contains(x.UserId))
-            .OrderByDescending(x => x.CreatedDateTime)
+            .OrderBy(x => x.TotalTime)
             .Skip(offset.Value)
             .Take(limit.Value)
             .ToListAsync();
 
-        return Results.Ok(entries);
+        return Results.Ok(
+            entries.Select(x => new Dto.Leaderboard.GetEntry(
+                x.UserId,
+                x.User!.Username,
+                x.CreatedDateTime,
+                x.TotalTime,
+                x.Penalties
+            ))
+        );
     }
 
     private sealed record CreateLeaderboardEntryDto(TimeSpan TotalTime, int Penalties);
@@ -89,7 +128,8 @@ public static class LeaderboardApi
     )
     {
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId is null)
+        var username = user.FindFirstValue("cognito:username");
+        if (userId is null || username is null)
             return Results.Forbid();
 
         var newEntry = new LeaderboardEntry
@@ -104,6 +144,15 @@ public static class LeaderboardApi
         dbContext.LeaderboardEntries.Add(newEntry);
 
         await dbContext.SaveChangesAsync();
-        return Results.Ok(newEntry);
+
+        return Results.Ok(
+            new Dto.Leaderboard.GetEntry(
+                userId,
+                username,
+                newEntry.CreatedDateTime,
+                newEntry.TotalTime,
+                newEntry.Penalties
+            )
+        );
     }
 }

@@ -26,7 +26,7 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    setIsLoggedIn(!!user);
+    setIsLoggedIn(!!user?.idToken);
   }, [user]);
 
   const showLogin = () => {
@@ -56,7 +56,9 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
     });
 
     const json = await res.json();
-    setUser({ username: user.username, id: user.id, refreshToken: json.RefreshToken, idToken: json.IdToken });
+    if (json) {
+      setUser({ username: user.username, id: user.id, refreshToken: json.RefreshToken, idToken: json.IdToken });
+    }
     return json.IdToken as string;
   };
 

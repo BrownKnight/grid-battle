@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { Grid, GridSource } from "../Models";
 import { ErrorContext } from "../ErrorContext";
-import { Button, ListGroup, Spinner } from "flowbite-react";
-import { BiCaretLeft, BiCaretRight } from "react-icons/bi";
+import { ListGroup } from "flowbite-react";
+import Paginator from "../common/Paginator";
 
 type Props = {
   pageSize: number;
@@ -55,25 +55,7 @@ export default function ListGrids({ pageSize, source, query, onGridChosen }: Pro
           </ListGroup.Item>
         );
       })}
-      <div className="flex flex-row justify-between items-center p-4">
-        {offset > 0 ? (
-          <Button className="w-10" outline pill size="sm" onClick={() => setOffset((x) => x - pageSize)}>
-            <BiCaretLeft />
-          </Button>
-        ) : (
-          <div className="w-10">&nbsp;</div>
-        )}
-
-        {loading ? <Spinner size="lg" /> : <span>Page {offset / pageSize + 1}</span>}
-
-        {results.length === pageSize ? (
-          <Button className="w-10" outline pill size="sm" onClick={() => setOffset((x) => x + pageSize)}>
-            <BiCaretRight />
-          </Button>
-        ) : (
-          <div className="w-10">&nbsp;</div>
-        )}
-      </div>
+      <Paginator offset={offset} setOffset={setOffset} pageSize={pageSize} resultsLength={results.length} loading={loading} />
     </ListGroup>
   );
 }
