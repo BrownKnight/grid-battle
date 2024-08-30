@@ -3,6 +3,7 @@ import { Grid, GridSource } from "../Models";
 import { ErrorContext } from "../ErrorContext";
 import { ListGroup } from "flowbite-react";
 import Paginator from "../common/Paginator";
+import GridTitle from "./GridTitle";
 
 type Props = {
   pageSize: number;
@@ -42,16 +43,7 @@ export default function ListGrids({ pageSize, source, query, onGridChosen }: Pro
       {results.map((grid, i) => {
         return (
           <ListGroup.Item key={i} onClick={() => onGridChosen(grid.id)}>
-            <div className="flex flex-row justify-between grow">
-              <div className="flex flex-col items-start">
-                <span className="text-lg font-semibold">{grid.name}</span>
-                <span className="text-xs text-gray-400">by {grid.createdBy}</span>
-              </div>
-
-              <div className="flex flex-col justify-center">
-                <span className="text-xs text-gray-400">{new Date(grid.createdDateTime).toLocaleDateString()}</span>
-              </div>
-            </div>
+            <GridTitle grid={grid} />
           </ListGroup.Item>
         );
       })}

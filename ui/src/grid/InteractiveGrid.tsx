@@ -34,7 +34,7 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
       }
       setSelected([]);
     }
-  }, [selected, setSelected, grid.categories, setMatchedCategories, setRemaining, onCorrect, onIncorrect]);
+  }, [selected, setSelected, grid.categories, setMatchedCategories, setRemaining, onCorrect, onIncorrect, matchedCategories.length]);
 
   const toggleSelected = (answer: string) => {
     setSelected((x) => {
@@ -49,7 +49,9 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
 
   return (
     <div className="flex flex-col grow text-center gap-1 md:gap-2">
-      <GridTitle grid={grid} />
+      <div className="flex flex-row">
+        <GridTitle grid={grid} />
+      </div>
 
       {matchedCategories.map((category, i) => (
         <Row key={i}>

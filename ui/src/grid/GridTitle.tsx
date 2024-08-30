@@ -2,7 +2,7 @@ import { Grid } from "../Models";
 
 export default function GridTitle({ grid }: { grid: Grid }) {
   return (
-    <div className="flex flex-row justify-between mb-1">
+    <div className="flex flex-row justify-between mb-1 grow">
       <div className="flex flex-col items-start">
         <span className="text-lg font-semibold">{grid.name}</span>
 
