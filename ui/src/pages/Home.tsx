@@ -107,16 +107,16 @@ export default function Home() {
             solution for the whole grid, even if one of the categories individually may have multiple soutions.
           </p>
           <br />
+          <p>For example, consider the following two categories:</p>
+          <ul className="list-inside list-disc my-2">
+            <li>
+              <strong>Colours:</strong> Red, Blue, Orange, Green
+            </li>
+            <li>
+              <strong>Golf Terms:</strong> Putter, Buggy, Fairway, Iron
+            </li>
+          </ul>
           <p>
-            For example, consider the following two categories:
-            <ul className="list-inside list-disc my-2">
-              <li>
-                <strong>Colours:</strong> Red, Blue, Orange, Green
-              </li>
-              <li>
-                <strong>Golf Terms:</strong> Putter, Buggy, Fairway, Iron
-              </li>
-            </ul>
             The word <em>Green</em> could be considered valid in both categories. However, the other 4 words in the{" "}
             <strong>Golf Terms</strong> category do not cross over with the <strong>Colours</strong> category, which means there is only one
             possible complete solution.
@@ -124,8 +124,11 @@ export default function Home() {
 
           <h2 className="font-semibold text-xl mt-8 mb-2">Open Source</h2>
           <p>
-            Grid Battle is Open Source, check out the <a className="text-sky-400 hover:text-sky-600" href="https://github.com/BrownKnight/grid-battle">GitHub repo</a> to see how it
-            works, or raise any issues you find. Contributions are welcome.
+            Grid Battle is Open Source, check out the{" "}
+            <a className="text-sky-400 hover:text-sky-600" href="https://github.com/BrownKnight/grid-battle">
+              GitHub repo
+            </a>{" "}
+            to see how it works, or raise any issues you find. Contributions are welcome.
           </p>
         </div>
       </div>

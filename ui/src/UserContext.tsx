@@ -2,6 +2,7 @@ import { Button, ButtonGroup, FloatingLabel, Modal } from "flowbite-react";
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import useApiClient from "./useApiClient";
+import { useNavigate } from "react-router-dom";
 
 export type User = { id: string; username: string; idToken: string; refreshToken: string };
 export type Props = {
@@ -21,6 +22,7 @@ export const UserContext = createContext<Props>({
 });
 
 export default function UserContextProvider({ children }: React.PropsWithChildren) {
+  const navigate = useNavigate();
   const [user, setUser] = useLocalStorageState<User | undefined>("user", { defaultValue: undefined });
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -64,12 +66,8 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
 
   const onClose = () => {
     setIsLoginOpen(false);
-    // history.pushState({}, "", `${window.location.toString()}#`)
-    const request = new XMLHttpRequest();
-    request.open('POST', '/index.html', true); // use a real url you have instead of '/success.html'
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-    request.send();
-  }
+    navigate("/");
+  };
 
   return (
     <UserContext.Provider value={{ user: user, isLoggedIn: isLoggedIn, showLogin: showLogin, logout: logout, refreshToken }}>
@@ -239,15 +237,14 @@ function LoginModal({
         </Button>
       </ButtonGroup>
 
-      <form action="#" onSubmit={(e) => (type === "login" ? login(e) : register(e))} autoComplete="on">
+      <form action="#" method="POST" onSubmit={(e) => (type === "login" ? login(e) : register(e))} autoComplete="on">
         <FloatingLabel
           id="username"
           name="username"
           className="bg-slate-900"
           variant="outlined"
           label="Username"
-          autoCorrect="false"
-          autoComplete="name"
+          autoComplete="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           maxLength={64}
@@ -260,7 +257,6 @@ function LoginModal({
             className="bg-slate-900"
             variant="outlined"
             label="Email"
-            autoCorrect="false"
             type="email"
             autoComplete="email"
             value={email}
@@ -275,7 +271,6 @@ function LoginModal({
           className="bg-slate-900"
           variant="outlined"
           label="Password"
-          autoCorrect="false"
           type="password"
           autoComplete={type === "login" ? "current-password" : "new-password"}
           value={password}

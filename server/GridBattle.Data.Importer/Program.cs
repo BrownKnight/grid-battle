@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using System.ComponentModel;
+using System.Globalization;
+using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using GridBattle.Data;
 using Microsoft.EntityFrameworkCore;
@@ -96,7 +98,12 @@ var lastNytImportGrid = await nytDbContext
 var lastNytImportDate =
     lastNytImportGrid?.CreatedDateTime.Date
     ?? new DateTimeOffset(2023, 06, 12, 0, 0, 0, TimeSpan.Zero).Date;
-var fromDate = DateOnly.FromDateTime(lastNytImportDate).AddDays(1);
+
+// If doing a minimal import, and theres no data for the last 30 days, then only load the last 30 days
+var fromDate =
+    args.Contains("--minimal") && lastNytImportDate < DateTime.UtcNow.AddDays(-30)
+        ? DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-29)
+        : DateOnly.FromDateTime(lastNytImportDate).AddDays(1);
 var toDate = DateOnly.FromDateTime(DateTimeOffset.UtcNow.Date);
 
 var httpClient = new HttpClient();
@@ -113,8 +120,9 @@ while (fromDate <= toDate)
         Name = $"NYT ({response!["print_date"]})",
         Source = GridSource.NYT,
         CreatedBy = "NYT Connections",
-        CreatedDateTime = DateTime.Parse(
-            response!["print_date"]?.ToString() ?? DateTime.UtcNow.ToString()
+        CreatedDateTime = DateTimeOffset.Parse(
+            response!["print_date"]?.ToString() ?? DateTimeOffset.UtcNow.ToString(),
+            styles: DateTimeStyles.AssumeUniversal
         ),
         Categories = response["categories"]!
             .AsArray()
