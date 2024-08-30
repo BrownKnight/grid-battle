@@ -134,6 +134,7 @@ public sealed class TimerBattleHub(
             battle =>
             {
                 battle.Players.RemoveAll(x => x.Name == name);
+                EnsureAtLeastOneActiveHost(battle);
             }
         );
 
@@ -254,7 +255,7 @@ public sealed class TimerBattleHub(
 
     public async Task<bool> MarkPlayerAsDisconnected(string playerToMark)
     {
-       await ExecuteInBattleAsync(battle =>
+        await ExecuteInBattleAsync(battle =>
         {
             AssertIsHost(battle);
             var player =
@@ -262,6 +263,8 @@ public sealed class TimerBattleHub(
                     x.Name.Equals(playerToMark, StringComparison.OrdinalIgnoreCase)
                 ) ?? throw new InvalidOperationException("Player not found in game");
             player.IsActive = false;
+
+            EnsureAtLeastOneActiveHost(battle);
         });
 
         return true;
@@ -295,6 +298,8 @@ public sealed class TimerBattleHub(
                     {
                         player.IsActive = false;
                     }
+
+                    EnsureAtLeastOneActiveHost(battle);
                 });
             }
         }
@@ -303,6 +308,19 @@ public sealed class TimerBattleHub(
             logger.LogError(ex, "Failed to mark player as inactive when disconnecting");
         }
         await base.OnDisconnectedAsync(exception);
+    }
+
+    private static void EnsureAtLeastOneActiveHost(TimerBattleRoom battle)
+    {
+        // Make sure there is always at least one host
+        if (!battle.Players.Any(x => x.IsHost && x.IsActive))
+        {
+            var newHost = battle.Players.FirstOrDefault(x => !x.IsHost && x.IsActive);
+            if (newHost is not null)
+            {
+                newHost.IsHost = true;
+            }
+        }
     }
 
     private static TimerBattleRoom.RoundScore EnsurePlayerHasScoreForCurrentRound(

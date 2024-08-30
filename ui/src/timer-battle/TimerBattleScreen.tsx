@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { TimerBattlePlayer } from "./Models";
 import { HiOutlineEllipsisHorizontal } from "react-icons/hi2";
 import SearchGrids from "../grid/SearchGrids";
-import { TbPlugConnectedX } from "react-icons/tb";
 import TimeDisplay from "../common/TimeDisplay";
 
 export default function TimerBattleScreen() {
@@ -171,14 +170,10 @@ function TimerBattleScores() {
             return (
               <Table.Row key={i}>
                 <Table.Cell className="p-2 text-right">{i + 1}</Table.Cell>
-                <Table.Cell className="inline-flex gap-2 p-2">
+                <Table.Cell className="inline-flex gap-2 p-2 items-center">
                   <span>{player.name}</span>
                   {player.isHost && <Badge>Host</Badge>}
-                  {!player.isActive && (
-                    <Badge color="warning" icon={TbPlugConnectedX}>
-                      Disconnected
-                    </Badge>
-                  )}
+                  {!player.isActive && <Badge color="warning">Disconnected</Badge>}
                 </Table.Cell>
                 {player.scores.map((score, j) => {
                   return (
