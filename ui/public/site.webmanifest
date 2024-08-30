@@ -1,0 +1,7 @@
+{
+  "name": "Grid Battle",
+  "short_name": "Grid Battle",
+  "theme_color": "#ff8a4c",
+  "background_color": "#e5e7eb",
+  "display": "standalone"
+}
