@@ -45,6 +45,7 @@ export default function LocalPlayGrid() {
         return;
       }
       if (json) setGrid(json);
+      setLoading(false);
     });
   }, [gridId, addError, apiClient]);
 
@@ -141,7 +142,6 @@ export default function LocalPlayGrid() {
         Well done! You completed the grid in <TimeDisplay totalTime={staticTime!} penalties={penalties} />, with a total of{" "}
         <span className="text-red-500">{penalties ?? 0}</span> mistakes.
       </span>
-
       {!isLoggedIn && (
         <span>
           <a href="#" onClick={showLogin} className="mx-1 text-sky-400 hover:text-sky-600">
@@ -150,7 +150,6 @@ export default function LocalPlayGrid() {
           to record this time on the leaderboard
         </span>
       )}
-
       {leaderboardEntry && (
         <>
           <span>
@@ -160,6 +159,11 @@ export default function LocalPlayGrid() {
           </span>
         </>
       )}
+      <Link to={`/grids/${gridId}/leaderboard`}>
+        <Button color="dark" fullSized>
+          View Leaderboard
+        </Button>
+      </Link>
     </div>
   );
 
@@ -177,11 +181,6 @@ export default function LocalPlayGrid() {
             penalties={penalties}
           />
           {staticTime && completedSection}
-          <Link to={`/grids/${gridId}/leaderboard`}>
-            <Button color="dark" fullSized>
-              View Leaderboard
-            </Button>
-          </Link>
         </div>
       </div>
     </div>
