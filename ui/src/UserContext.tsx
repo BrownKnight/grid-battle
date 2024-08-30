@@ -62,14 +62,23 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
     return json.IdToken as string;
   };
 
+  const onClose = () => {
+    setIsLoginOpen(false);
+    // history.pushState({}, "", `${window.location.toString()}#`)
+    const request = new XMLHttpRequest();
+    request.open('POST', '/index.html', true); // use a real url you have instead of '/success.html'
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    request.send();
+  }
+
   return (
     <UserContext.Provider value={{ user: user, isLoggedIn: isLoggedIn, showLogin: showLogin, logout: logout, refreshToken }}>
       {children}
 
       {isLoggedIn ? (
-        <UserModal show={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+        <UserModal show={isLoginOpen} onClose={onClose} />
       ) : (
-        <LoginModal show={isLoginOpen} onClose={() => setIsLoginOpen(false)} setUser={setUser} />
+        <LoginModal show={isLoginOpen} onClose={onClose} setUser={setUser} />
       )}
     </UserContext.Provider>
   );
@@ -230,7 +239,7 @@ function LoginModal({
         </Button>
       </ButtonGroup>
 
-      <form onSubmit={(e) => (type === "login" ? login(e) : register(e))}>
+      <form action="#" onSubmit={(e) => (type === "login" ? login(e) : register(e))} autoComplete="on">
         <FloatingLabel
           id="username"
           name="username"
