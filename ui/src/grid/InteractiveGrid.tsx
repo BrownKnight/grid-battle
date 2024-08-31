@@ -56,8 +56,8 @@ export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props)
       {matchedCategories.map((category, i) => (
         <Row key={i}>
           <div className="flex-1 grow rounded-lg content-center bg-green-700 text-white">
-            <p className="font-bold text-lg">{category.name}</p>
-            <p className="font-normal text-sm">{category.answers.join(" | ")}</p>
+            <p className="font-bold text-normal md:text-lg">{category.name}</p>
+            <p className="font-normal text-xs md:text-sm">{category.answers.join(" | ")}</p>
           </div>
         </Row>
       ))}
