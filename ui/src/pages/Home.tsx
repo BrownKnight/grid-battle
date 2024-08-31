@@ -119,8 +119,8 @@ export default function Home() {
           <br />
           <p>
             When creating your own Grid, it's important to ensure that there is only one correct solution to the grid. Red herrings are a
-            popular way to make grids more difficult, however it's important to ensure that the red herring still results in a single
-            solution for the whole grid, even if one of the categories individually may have multiple soutions.
+            popular way to make grids more difficult, however they should still result in a single solution for the whole grid, even if one
+            of the categories individually may have multiple solutions.
           </p>
           <br />
           <p>For example, consider the following two categories:</p>
