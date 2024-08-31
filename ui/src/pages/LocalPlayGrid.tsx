@@ -58,7 +58,6 @@ export default function LocalPlayGrid() {
 
   useEffect(() => {
     // Reset the state when the grid changes
-    setLoading(false);
     setStartTime(Date.now());
     setStaticTime(undefined);
     setPenalties(0);
@@ -148,7 +147,7 @@ export default function LocalPlayGrid() {
   const completedSection = (
     <div className="flex flex-col gap-2 text-center mb-4 mt-2">
       <span>
-        Well done! You completed the grid in <TimeDisplay totalTime={staticTime!} penalties={penalties} />, with a total of{" "}
+        Well done! You completed the grid in <TimeDisplay totalTime={staticTime!} penalties={penalties} /> with a total of{" "}
         <span className="text-red-500">{penalties ?? 0}</span> mistakes.
       </span>
       {!isLoggedIn && (
