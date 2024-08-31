@@ -44,7 +44,7 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
       AuthFlow: "REFRESH_TOKEN_AUTH",
       ClientId: "6q9id5vhqfocb9mc0deep4at49",
       AuthParameters: {
-        REFRESH_TOKEN: user?.refreshToken,
+        REFRESH_TOKEN: user.refreshToken,
       },
     };
 
@@ -59,9 +59,9 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
 
     const json = await res.json();
     if (json) {
-      setUser({ username: user.username, id: user.id, refreshToken: json.RefreshToken, idToken: json.IdToken });
+      setUser({ username: user.username, id: user.id, refreshToken: json?.AuthenticationResult?.RefreshToken, idToken: json?.AuthenticationResult?.IdToken });
     }
-    return json.IdToken as string;
+    return json?.AuthenticationResult?.IdToken as string;
   };
 
   const onClose = () => {
