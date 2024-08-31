@@ -46,7 +46,7 @@ export default function LeaderboardEntriesTable({ gridId, leaderboardId }: { gri
       <Table.Body>
         {entries.map((entry, i) => (
           <Table.Row key={entry.userId}>
-            <Table.Cell className="p-1">{i + offset + 1}</Table.Cell>
+            <Table.Cell className="p-1 text-right">{i + offset + 1}</Table.Cell>
             <Table.Cell className="p-2">
               <span className="inline-flex gap-2">
                 {entry.username}

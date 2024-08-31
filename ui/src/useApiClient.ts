@@ -61,6 +61,15 @@ export default function useApiClient() {
     return await execute(`/api/grids/${gridId}/leaderboards/entries`, { method: "POST", body: JSON.stringify(request) });
   };
 
+  const joinLeaderboard = async (leaderboardId: string) => {
+    return await execute(`/api/leaderboards/${leaderboardId}`, { method: "POST" });
+  };
+
+  const createLeaderboard = async (name: string) => {
+    const request = { name };
+    return await execute(`/api/leaderboards`, { method: "POST", body: JSON.stringify(request) });
+  };
+
   return useMemo(() => {
     return {
       getCurrentProfile,
@@ -69,6 +78,8 @@ export default function useApiClient() {
       createLeaderboardEntry,
       getMySubcribedLeaderboards,
       getLeaderboardEntriesForGrid,
+      joinLeaderboard,
+      createLeaderboard,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);

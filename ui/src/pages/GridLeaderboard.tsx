@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useApiClient from "../useApiClient";
 import { useContext, useEffect, useState } from "react";
 import { Leaderboard, LeaderboardEntry } from "../Models";
@@ -79,6 +79,13 @@ export default function GridLeaderboard() {
             {new Date(Date.parse(myLeaderboardEntry.createdDateTime)).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
           </span>
         )}
+      </div>
+
+      <div className="flex justify-center mt-4">
+        <Link to="/leaderboards" className="text-sky-400 hover:text-sky-600 mr-1">
+          Create your own Leaderboard
+        </Link>
+        <span> to see how you fare against your friends.</span>
       </div>
     </div>
   );

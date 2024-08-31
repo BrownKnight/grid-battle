@@ -5,6 +5,7 @@ import { LuPlus, LuSwords } from "react-icons/lu";
 import { BiShuffle } from "react-icons/bi";
 import SearchGrids from "../grid/SearchGrids";
 import { UserContext } from "../UserContext";
+import { MdLeaderboard } from "react-icons/md";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -41,6 +42,12 @@ export default function Home() {
             <span className="flex justify-center gap-2">
               <LuPlus className="h-8" />
               Create a Grid
+            </span>
+          </NavButton>
+          <NavButton to="/leaderboards" color="purple">
+            <span className="flex justify-center gap-2">
+              <MdLeaderboard className="h-8" />
+              Leaderboards
             </span>
           </NavButton>
         </div>
@@ -86,10 +93,19 @@ export default function Home() {
           <h2 className="font-semibold text-xl mt-8 mb-2">Leaderboards</h2>
           <p>
             The first time you complete a grid (outside of Battle Mode), your time will be saved and entered in to the Leaderboard. To save
-            your time to the leaderboard, you must be{" "}
-            <a href="#" onClick={showLogin} className=" text-sky-400 hover:text-sky-600">
+            your time to the leaderboard, you must be
+            <a href="#" onClick={showLogin} className="ml-1 text-sky-400 hover:text-sky-600">
               logged in.
             </a>
+          </p>
+          <br />
+          <p>
+            You can even
+            <Link to="/leaderboards" className="text-sky-400 hover:text-sky-600 mx-1">
+              create your own Leaderboard
+            </Link>
+            to see how your fare you fare against just your friends. Send an invite code or link to anyone and they'll be added to your new
+            leaderboard.
           </p>
 
           <h2 className="font-semibold text-xl mt-8 mb-2">Create your own Grid</h2>

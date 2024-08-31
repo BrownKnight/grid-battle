@@ -7,6 +7,7 @@ import LocalPlayGrid from "./pages/LocalPlayGrid";
 import CreateJoinTimerBattle from "./pages/CreateJoinTimerBattle";
 import CreateGrid from "./pages/CreateGrid";
 import GridLeaderboard from "./pages/GridLeaderboard";
+import LeaderboardsPage from "./pages/LeaderboardsPage";
 
 const randomGridLoader = async () => {
   const res = await fetch("/api/grids/random");
@@ -28,6 +29,8 @@ const router = createBrowserRouter(
       <Route path="/grids/random" loader={randomGridLoader} />
       <Route path="/grids/:gridId" element={<LocalPlayGrid />} />
       <Route path="/grids/:gridId/leaderboard" element={<GridLeaderboard />} />
+      <Route path="/leaderboards" element={<LeaderboardsPage />} />
+      <Route path="/leaderboards/:leaderboardId/join" element={<LeaderboardsPage />} />
     </Route>
   )
 );

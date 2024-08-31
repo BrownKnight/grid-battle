@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using GridBattle.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,18 @@ public static class LeaderboardApi
             .Produces<List<Dto.Leaderboard.GetEntry>>(StatusCodes.Status404NotFound)
             .WithOpenApi();
 
+        app.MapPost("/api/leaderboards", CreateLeaderboard)
+            .WithName("createLeaderboard")
+            .WithDescription("Creates a new leaderboard")
+            .Produces<Leaderboard>(StatusCodes.Status200OK)
+            .WithOpenApi();
+
+        app.MapPost("/api/leaderboards/{leaderboardId}", JoinLeaderboard)
+            .WithName("joinLeaderboard")
+            .WithDescription("Joins an existing leaderboard")
+            .Produces<List<Dto.Leaderboard.Get>>(StatusCodes.Status200OK)
+            .WithOpenApi();
+
         return app;
     }
 
@@ -76,7 +89,7 @@ public static class LeaderboardApi
                 .Include(x => x.Leaderboard)
                 .Where(x => x.UserId == userId)
                 .Select(x => x.Leaderboard!)
-                .OrderByDescending(x => x!.CreatedDateTime)
+                .OrderBy(x => x!.CreatedDateTime)
                 .ToListAsync();
 
         return Results.Ok(
@@ -164,5 +177,73 @@ public static class LeaderboardApi
                 newEntry.Penalties
             )
         );
+    }
+
+    private sealed record CreateLeaderboardDto(string Name);
+
+    private static async Task<IResult> CreateLeaderboard(
+        [FromBody] CreateLeaderboardDto request,
+        [FromServices] GridDbContext dbContext,
+        ClaimsPrincipal user
+    )
+    {
+        RequestValidationException.AssertAtLeast(request.Name, 4);
+
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+            return Results.Forbid();
+
+        var newLeaderboard = new Leaderboard
+        {
+            LeaderboardId = IdCodeGenerator.GenerateId(6),
+            CreatedDateTime = DateTimeOffset.UtcNow,
+            Name = request.Name,
+        };
+
+        dbContext.Leaderboards.Add(newLeaderboard);
+
+        var newSubscription = new LeaderboardSubscription
+        {
+            LeaderboardId = newLeaderboard.LeaderboardId,
+            UserId = userId,
+            CreatedDateTime = DateTimeOffset.UtcNow,
+            IsOwner = true,
+        };
+        dbContext.LeaderboardSubscriptions.Add(newSubscription);
+
+        await dbContext.SaveChangesAsync();
+
+        return Results.Ok(
+            new Dto.Leaderboard.Get(newLeaderboard.LeaderboardId, newLeaderboard.Name)
+        );
+    }
+
+    private static async Task<IResult> JoinLeaderboard(
+        [FromRoute] string leaderboardId,
+        [FromServices] GridDbContext dbContext,
+        ClaimsPrincipal user
+    )
+    {
+        RequestValidationException.AssertExactly(leaderboardId, 6);
+
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+            return Results.Forbid();
+
+        var newSubscription = new LeaderboardSubscription
+        {
+            LeaderboardId = leaderboardId,
+            UserId = userId,
+            CreatedDateTime = DateTimeOffset.UtcNow,
+            IsOwner = true,
+        };
+
+        dbContext.LeaderboardSubscriptions.Add(newSubscription);
+
+        await dbContext.SaveChangesAsync();
+
+        var subscribedLeaderboards = GetLeaderboards(dbContext, user);
+
+        return Results.Ok(subscribedLeaderboards);
     }
 }
