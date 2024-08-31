@@ -241,7 +241,7 @@ function LoginModal({
         <FloatingLabel
           id="username"
           name="username"
-          className="bg-slate-900"
+          className="dark:bg-slate-900"
           variant="outlined"
           label="Username"
           autoComplete="username"
@@ -254,7 +254,7 @@ function LoginModal({
           <FloatingLabel
             id="email"
             name="email"
-            className="bg-slate-900"
+            className="dark:bg-slate-900"
             variant="outlined"
             label="Email"
             type="email"
@@ -268,7 +268,7 @@ function LoginModal({
         <FloatingLabel
           id="password"
           name="password"
-          className="bg-slate-900"
+          className="dark:bg-slate-900"
           variant="outlined"
           label="Password"
           type="password"
@@ -290,7 +290,7 @@ function LoginModal({
       <FloatingLabel
         id="verification-code"
         name="verification-code"
-        className="bg-slate-900"
+        className="dark:bg-slate-900"
         variant="outlined"
         label="Verification Code"
         autoCorrect="false"

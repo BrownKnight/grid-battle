@@ -3,7 +3,7 @@ import { UserContext } from "./UserContext";
 import { ErrorContext } from "./ErrorContext";
 
 export default function useApiClient() {
-  const { user, refreshToken } = useContext(UserContext);
+  const { isLoggedIn, user, refreshToken } = useContext(UserContext);
   const { addError } = useContext(ErrorContext);
 
   const execute = async (url: string, options?: RequestInit) => {
@@ -71,5 +71,5 @@ export default function useApiClient() {
       getLeaderboardEntriesForGrid,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.idToken]);
+  }, [isLoggedIn]);
 }

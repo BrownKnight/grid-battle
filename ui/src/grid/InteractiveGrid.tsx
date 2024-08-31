@@ -10,7 +10,7 @@ type Props = {
 };
 
 function Row({ children }: React.PropsWithChildren) {
-  return <div className="flex flex-row aspect-[6/1] gap-1 md:gap-2">{children}</div>;
+  return <div className="flex flex-row aspect-[5/1] md:aspect-[6/1] gap-1 md:gap-2">{children}</div>;
 }
 
 export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props) {

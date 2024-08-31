@@ -38,25 +38,25 @@ export default function LeaderboardEntriesTable({ gridId, leaderboardId }: { gri
   return (
     <Table>
       <Table.Head>
-        <Table.HeadCell>Pos</Table.HeadCell>
-        <Table.HeadCell>Username</Table.HeadCell>
-        <Table.HeadCell>Entry Date</Table.HeadCell>
-        <Table.HeadCell>Time</Table.HeadCell>
+        <Table.HeadCell className="p-1"></Table.HeadCell>
+        <Table.HeadCell className="p-2">Username</Table.HeadCell>
+        <Table.HeadCell className="p-2">Entry Date</Table.HeadCell>
+        <Table.HeadCell className="p-2">Time</Table.HeadCell>
       </Table.Head>
       <Table.Body>
         {entries.map((entry, i) => (
           <Table.Row key={entry.userId}>
-            <Table.Cell>{i + offset + 1}</Table.Cell>
-            <Table.Cell>
+            <Table.Cell className="p-1">{i + offset + 1}</Table.Cell>
+            <Table.Cell className="p-2">
               <span className="inline-flex gap-2">
                 {entry.username}
                 {user?.username === entry.username && <Badge>You</Badge>}
               </span>
             </Table.Cell>
-            <Table.Cell>
+            <Table.Cell className="p-2">
               {new Date(Date.parse(entry.createdDateTime)).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
             </Table.Cell>
-            <Table.Cell>
+            <Table.Cell className="p-2">
               <TimeDisplay totalTime={entry.totalTime} penalties={entry.penalties} />
             </Table.Cell>
           </Table.Row>

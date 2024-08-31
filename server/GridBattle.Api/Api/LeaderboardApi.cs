@@ -132,6 +132,16 @@ public static class LeaderboardApi
         if (userId is null || username is null)
             return Results.Forbid();
 
+        // check for an existing entry, and return it
+        var existing = await dbContext
+            .LeaderboardEntries.Where(x => x.GridId == gridId && x.UserId == userId)
+            .FirstOrDefaultAsync();
+
+        if (existing is not null)
+        {
+            return TypedResults.Ok(existing);
+        }
+
         var newEntry = new LeaderboardEntry
         {
             GridId = gridId,
