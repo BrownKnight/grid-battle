@@ -81,8 +81,8 @@ export default function GridLeaderboard() {
         )}
       </div>
 
-      <div className="flex justify-center mt-4">
-        <Link to="/leaderboards" className="text-sky-400 hover:text-sky-600 mr-1">
+      <div className="text-center mt-4">
+        <Link  to="/leaderboards" className="text-sky-400 hover:text-sky-600">
           Create your own Leaderboard
         </Link>
         <span> to see how you fare against your friends.</span>
