@@ -1,0 +1,502 @@
+[
+    {
+        "id": "AI0001",
+        "name": "AI Beginner 1",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Fruits",
+                "answers": [ "Apple", "Banana", "Orange", "Grape" ]
+            },
+            {
+                "name": "Animals",
+                "answers": [ "Lion", "Elephant", "Tiger", "Zebra" ]
+            },
+            {
+                "name": "Colors",
+                "answers": [ "Red", "Blue", "Green", "Yellow" ]
+            },
+            {
+                "name": "Vehicles",
+                "answers": [ "Car", "Bicycle", "Airplane", "Boat" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0002",
+        "name": "AI Beginner 2",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Planets",
+                "answers": [ "Mercury", "Venus", "Earth", "Mars" ]
+            },
+            {
+                "name": "Elements",
+                "answers": [ "Oxygen", "Hydrogen", "Carbon", "Nitrogen" ]
+            },
+            {
+                "name": "Types of Clouds",
+                "answers": [ "Cumulus", "Stratus", "Cirrus", "Nimbus" ]
+            },
+            {
+                "name": "Greek Mythology Figures",
+                "answers": [ "Zeus", "Hera", "Apollo", "Athena" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0003",
+        "name": "AI Beginner 3",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Renaissance Artists",
+                "answers": [ "Michelangelo", "Raphael", "Titian", "Donatello" ]
+            },
+            {
+                "name": "Italian Cities",
+                "answers": [ "Florence", "Venice", "Milan", "Rome" ]
+            },
+            {
+                "name": "Classical Sculptors",
+                "answers": [ "Phidias", "Donatello", "Michelangelo", "Praxiteles" ]
+            },
+            {
+                "name": "Famous Cathedrals",
+                "answers": [ "St. Peter's Basilica", "Duomo di Milano", "Florence Cathedral", "Notre Dame" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0004",
+        "name": "AI Beginner 4",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Nobel Prize Winners",
+                "answers": [ "Einstein", "Curie", "Fleming", "Feynman" ]
+            },
+            {
+                "name": "Classical Composers",
+                "answers": [ "Beethoven", "Mozart", "Bach", "Tchaikovsky" ]
+            },
+            {
+                "name": "Famous Scientists",
+                "answers": [ "Newton", "Darwin", "Hawking", "Galileo" ]
+            },
+            {
+                "name": "Literary Figures",
+                "answers": [ "Shakespeare", "Hemingway", "Austen", "Tolkien" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0005",
+        "name": "AI Beginner 5",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Nobel Prize Winners",
+                "answers": [ "Einstein", "Curie", "Fleming", "Feynman" ]
+            },
+            {
+                "name": "Classical Composers",
+                "answers": [ "Beethoven", "Mozart", "Bach", "Tchaikovsky" ]
+            },
+            {
+                "name": "Famous Scientists",
+                "answers": [ "Newton", "Darwin", "Hawking", "Galileo" ]
+            },
+            {
+                "name": "Literary Figures",
+                "answers": [ "Shakespeare", "Hemingway", "Austen", "Tolkien" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0006",
+        "name": "AI Beginner 6",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Marvel Superheroes",
+                "answers": [ "Spider-Man", "Iron Man", "Thor", "Black Widow" ]
+            },
+            {
+                "name": "Famous TV Show Characters",
+                "answers": [ "Homer Simpson", "Walter White", "Jon Snow", "Michael Scott" ]
+            },
+            {
+                "name": "Iconic Movie Directors",
+                "answers": [ "Spielberg", "Tarantino", "Kubrick", "Cameron" ]
+            },
+            {
+                "name": "Popular Music Genres",
+                "answers": [ "Rock", "Pop", "Hip-Hop", "Jazz" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0007",
+        "name": "AI Beginner 7",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Psychological Concepts",
+                "answers": [ "Cognitive Dissonance", "Ego", "Sublimation", "Projection" ]
+            },
+            {
+                "name": "Art Movements",
+                "answers": [ "Impressionism", "Cubism", "Surrealism", "Expressionism" ]
+            },
+            {
+                "name": "Film Genres",
+                "answers": [ "Noir", "Futuristic", "Documentary", "Musical" ]
+            },
+            {
+                "name": "Theatrical Terms",
+                "answers": [ "Monologue", "Stage Directions", "Protagonist", "Fourth Wall" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0008",
+        "name": "AI Beginner 8",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Continents",
+                "answers": [ "Africa", "Asia", "Europe", "Oceania" ]
+            },
+            {
+                "name": "Mountain Ranges",
+                "answers": [ "Himalayas", "Andes", "Rockies", "Alps" ]
+            },
+            {
+                "name": "Major Rivers",
+                "answers": [ "Nile", "Amazon", "Yangtze", "Mississippi" ]
+            },
+            {
+                "name": "Deserts",
+                "answers": [ "Sahara", "Gobi", "Kalahari", "Mojave" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0009",
+        "name": "AI Beginner 9",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "World Capitals",
+                "answers": [ "Tokyo", "Paris", "Nairobi", "Buenos Aires" ]
+            },
+            {
+                "name": "Island Nations",
+                "answers": [ "Iceland", "Japan", "Madagascar", "New Zealand" ]
+            },
+            {
+                "name": "Tropical Rainforests",
+                "answers": [ "Amazon", "Congo", "Daintree", "Valdivian" ]
+            },
+            {
+                "name": "Historic Trade Routes",
+                "answers": [ "Silk Road", "Incense Route", "Amber Road", "Spice Route" ]
+            }
+        ]
+    },
+    {
+        "id": "AI0010",
+        "name": "AI Beginner 10",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Geological Features",
+                "answers": [ "Volcano", "Glacier", "Canyon", "Fault Line" ]
+            },
+            {
+                "name": "Largest Oceans",
+                "answers": [ "Pacific", "Atlantic", "Indian", "Southern" ]
+            },
+            {
+                "name": "Desert Landscapes",
+                "answers": [ "Sand Dunes", "Salt Flats", "Rock Formations", "Oases" ]
+            },
+            {
+                "name": "Ancient Wonders",
+                "answers": [ "Great Pyramid of Giza", "Hanging Gardens of Babylon", "Statue of Zeus at Olympia", "Temple of Artemis" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1001",
+        "name": "AI Moderate 1",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Mythological Creatures",
+                "answers": [ "Phoenix", "Cerberus", "Griffin", "Minotaur" ]
+            },
+            {
+                "name": "Philosophers",
+                "answers": [ "Plato", "Aristotle", "Nietzsche", "Confucius" ]
+            },
+            {
+                "name": "Renaissance Artists",
+                "answers": [ "Michelangelo", "Leonardo", "Raphael", "Donatello" ]
+            },
+            {
+                "name": "Chemical Elements",
+                "answers": [ "Helium", "Neon", "Argon", "Xenon" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1002",
+        "name": "AI Moderate 2",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Sci-Fi Movie Directors",
+                "answers": [ "Ridley Scott", "James Cameron", "George Lucas", "Stanley Kubrick" ]
+            },
+            {
+                "name": "Cult TV Show Characters",
+                "answers": [ "Don Draper", "Sherlock Holmes", "Buffy Summers", "Saul Goodman" ]
+            },
+            {
+                "name": "Legendary Music Producers",
+                "answers": [ "Quincy Jones", "Phil Spector", "Rick Rubin", "Brian Eno" ]
+            },
+            {
+                "name": "Influential Comic Book Writers",
+                "answers": [ "Stan Lee", "Alan Moore", "Frank Miller", "Jack Kirby" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1003",
+        "name": "AI Moderate 3",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Science Fiction Subgenres",
+                "answers": [ "Cyberpunk", "Space Opera", "Dystopian", "Time Travel" ]
+            },
+            {
+                "name": "Classic TV Show Tropes",
+                "answers": [ "Flashbacks", "Dream Sequences", "Cliffhangers", "Break the Fourth Wall" ]
+            },
+            {
+                "name": "Music Production Techniques",
+                "answers": [ "Sampling", "Sidechaining", "Reverb", "Equalization" ]
+            },
+            {
+                "name": "Graphic Novel Themes",
+                "answers": [ "Superheroes", "Alternate History", "Post-Apocalyptic", "Urban Fantasy" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1004",
+        "name": "AI Moderate 4",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Action Verbs",
+                "answers": [ "Run", "Swim", "Climb", "Dance" ]
+            },
+            {
+                "name": "Transitive Verbs",
+                "answers": [ "Throw", "Give", "Send", "Teach" ]
+            },
+            {
+                "name": "Intransitive Verbs",
+                "answers": [ "Sleep", "Arrive", "Cry", "Sneeze" ]
+            },
+            {
+                "name": "Irregular Verbs",
+                "answers": [ "Go", "Eat", "Begin", "Write" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1005",
+        "name": "AI Moderate 5",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Cities on Major Rivers",
+                "answers": [ "Cairo", "Paris", "London", "Shanghai" ]
+            },
+            {
+                "name": "Cities with Notable Skylines",
+                "answers": [ "New York", "Hong Kong", "Dubai", "Sydney" ]
+            },
+            {
+                "name": "Historic Capitals",
+                "answers": [ "Rome", "Constantinople", "Baghdad", "Kyoto" ]
+            },
+            {
+                "name": "Metropolises with Iconic Landmarks",
+                "answers": [ "San Francisco", "Moscow", "Athens", "Rio de Janeiro" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1006",
+        "name": "AI Moderate 6",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Cities with Extensive Public Transit Systems",
+                "answers": [ "Tokyo", "New York", "London", "Berlin" ]
+            },
+            {
+                "name": "Cities Known for Their Festivals",
+                "answers": [ "Rio de Janeiro", "Edinburgh", "Munich", "New Orleans" ]
+            },
+            {
+                "name": "Cities with Famous University Campuses",
+                "answers": [ "Cambridge", "Oxford", "Harvard", "Stanford" ]
+            },
+            {
+                "name": "Cities with Historic Walled Cities",
+                "answers": [ "Jerusalem", "Dubrovnik", "Xi'an", "Carcassonne" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1007",
+        "name": "AI Moderate 7",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "F1 Constructors",
+                "answers": [ "Williams", "Tyrrell", "Jordan", "McLaren" ]
+            },
+            {
+                "name": "F1 Grand Prix Venues",
+                "answers": [ "Monaco", "Silverstone", "Monza", "Suzuka" ]
+            },
+            {
+                "name": "F1 World Champions",
+                "answers": [ "Hamilton", "Schumacher", "Senna", "Vettel" ]
+            },
+            {
+                "name": "F1 Engine Suppliers",
+                "answers": [ "Renault", "Honda", "Ferrari", "Mercedes" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1008",
+        "name": "AI Moderate 8",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Nobel Prize Categories",
+                "answers": [ "Peace", "Literature", "Chemistry", "Economic Sciences" ]
+            },
+            {
+                "name": "Historical Eras in Western Philosophy",
+                "answers": [ "Socratic", "Scholastic", "Enlightenment", "Existentialist" ]
+            },
+            {
+                "name": "Famous Scientific Theories",
+                "answers": [ "Theory of Relativity", "Quantum Mechanics", "Plate Tectonics", "Evolution by Natural Selection" ]
+            },
+            {
+                "name": "Ancient Greek City-States",
+                "answers": [ "Athens", "Sparta", "Corinth", "Thebes" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1009",
+        "name": "AI Moderate 9",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "European Highlands",
+                "answers": [ "Scottish Highlands", "Bohemian Massif", "Massif Central", "Scandinavian Mountains" ]
+            },
+            {
+                "name": "European Lowlands",
+                "answers": [ "North European Plain", "Hungarian Plain", "Po Valley", "Pannonian Plain" ]
+            },
+            {
+                "name": "European Autonomous Regions",
+                "answers": [ "Catalonia", "Åland Islands", "Basque Country", "Flanders" ]
+            },
+            {
+                "name": "European Historical Borders",
+                "answers": [ "Holy Roman Empire", "Ottoman Empire", "Austro-Hungarian Empire", "Byzantine Empire" ]
+            }
+        ]
+    },
+    {
+        "id": "AI1010",
+        "name": "AI Moderate 10",
+        "source": "AI",
+        "createdDateTime": "2024-09-01T00:00:00.000Z",
+        "createdBy": "ChatGPT",
+        "categories": [
+            {
+                "name": "Famous American Jazz Musicians",
+                "answers": [ "Louis Armstrong", "Duke Ellington", "Charlie Parker", "Miles Davis" ]
+            },
+            {
+                "name": "Iconic American Landmarks",
+                "answers": [ "Statue of Liberty", "Mount Rushmore", "Golden Gate Bridge", "Grand Canyon" ]
+            },
+            {
+                "name": "Popular American TV Shows",
+                "answers": [ "Friends", "The Simpsons", "Breaking Bad", "The Office" ]
+            },
+            {
+                "name": "Major U.S. Music Festivals",
+                "answers": [ "Coachella", "Lollapalooza", "South by Southwest", "Bonnaroo" ]
+            }
+        ]
+    }
+]

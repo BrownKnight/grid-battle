@@ -7,7 +7,7 @@ export type Grid = {
   categories: Category[];
 };
 
-export type GridSource = "NYT" | "Custom" | "Test";
+export type GridSource = "NYT" | "Custom" | "Test" | "AI";
 
 export type Category = {
   name: string;

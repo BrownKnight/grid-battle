@@ -10,7 +10,7 @@ type Props = {
 
 export default function SearchGrids({ pageSize, onGridChosen }: Props) {
   const [query, setQuery] = useState("");
-  const [source, setSource] = useState<GridSource>("NYT");
+  const [source, setSource] = useState<GridSource>("AI");
 
   return (
     <div>
@@ -20,6 +20,7 @@ export default function SearchGrids({ pageSize, onGridChosen }: Props) {
         </div>
         <Select value={source} onChange={(e) => setSource(e.target.value as GridSource)}>
           <option value="NYT">NYT</option>
+          <option value="AI">AI Generated</option>
           <option value="Custom">User Submitted</option>
         </Select>
       </form>

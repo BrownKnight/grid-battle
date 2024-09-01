@@ -5,4 +5,5 @@ public enum GridSource
     NYT,
     Custom,
     Test,
+    AI,
 }
