@@ -63,6 +63,7 @@ public static class GridApi
                 )
             )
             .OrderByDescending(x => x.CreatedDateTime)
+            .ThenBy(x => x.Id)
             .Skip(offset.Value)
             .Take(limit.Value)
             .ToListAsync();
