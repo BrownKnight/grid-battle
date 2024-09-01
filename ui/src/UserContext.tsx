@@ -58,9 +58,17 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
     });
 
     const json = await res.json();
-    if (json) {
-      setUser({ username: user.username, id: user.id, refreshToken: json?.AuthenticationResult?.RefreshToken, idToken: json?.AuthenticationResult?.IdToken });
+    if (json?.AuthenticationResult) {
+      setUser({
+        username: user.username,
+        id: user.id,
+        refreshToken: user.refreshToken,
+        idToken: json?.AuthenticationResult?.IdToken,
+      });
+    } else {
+      console.error("Tried to refresh token but got no new token");
     }
+
     return json?.AuthenticationResult?.IdToken as string;
   };
 

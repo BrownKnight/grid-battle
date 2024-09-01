@@ -68,7 +68,7 @@ export default function LeaderboardsPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center mx-auto">
+      <div className="flex flex-col items-center mx-auto mt-4">
         <Spinner />
         <span>Loading subscribed leaderboards...</span>
       </div>

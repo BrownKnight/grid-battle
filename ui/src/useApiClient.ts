@@ -27,8 +27,17 @@ export default function useApiClient() {
         res = await fetch(url, options);
       }
 
-      if (!res.ok && res.status !== 404) throw new Error(`Error executing request: ${res.status}`);
-      const json = res.status === 404 ? undefined : await res.json();
+      if (!res.ok) {
+        if (res.status === 403) {
+          throw new Error("Failed to refresh session, please login again.");
+        } else if (res.status === 404) {
+          return { res, json: undefined };
+        } else {
+          throw new Error(`Error executing request: ${res.status}`);
+        }
+      }
+
+      const json = await res.json();
       return { res, json };
     } catch (e) {
       addError(e as string);
