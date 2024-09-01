@@ -21,20 +21,18 @@ export default function CreateJoinTimerBattle() {
 
     signalR.useSignalREffect(
       "battle-update",
-      (battle: TimerBattleRoom) => {
-        if (!battle.players.find((x) => x.name.toUpperCase() === username)) {
+      (b: TimerBattleRoom) => {
+        if (!b.players.find((x) => x.name.toUpperCase() === username.toUpperCase())) {
           // Current player no longer in the game, they've been kicked
           setBattle(undefined);
           setRoomId("");
           navigate("/battle");
           addError("It appears you've been kicked from the game.");
         } else {
-          setBattle((b) => {
-            return { ...b, ...battle };
-          });
+          setBattle(b);
         }
       },
-      [setBattle]
+      [username, setBattle]
     );
 
     return battle ? <TimerBattleScreen /> : <JoinTimerBattle />;

@@ -50,31 +50,6 @@
         ]
     },
     {
-        "id": "AI0003",
-        "name": "AI Beginner 3",
-        "source": "AI",
-        "createdDateTime": "2024-09-01T00:00:00.000Z",
-        "createdBy": "ChatGPT",
-        "categories": [
-            {
-                "name": "Renaissance Artists",
-                "answers": [ "Michelangelo", "Raphael", "Titian", "Donatello" ]
-            },
-            {
-                "name": "Italian Cities",
-                "answers": [ "Florence", "Venice", "Milan", "Rome" ]
-            },
-            {
-                "name": "Classical Sculptors",
-                "answers": [ "Phidias", "Donatello", "Michelangelo", "Praxiteles" ]
-            },
-            {
-                "name": "Famous Cathedrals",
-                "answers": [ "St. Peter's Basilica", "Duomo di Milano", "Florence Cathedral", "Notre Dame" ]
-            }
-        ]
-    },
-    {
         "id": "AI0004",
         "name": "AI Beginner 4",
         "source": "AI",

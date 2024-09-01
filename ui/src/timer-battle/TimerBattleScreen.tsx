@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { TimerBattleContext } from "./TimerBattleContext";
-import { Badge, Button, Clipboard, Popover, Table } from "flowbite-react";
+import { Badge, Button, Clipboard, HR, Popover, Table } from "flowbite-react";
 import _ from "underscore";
 import TimedGrid from "../grid/TimedGrid";
 import { Category } from "../Models";
@@ -9,6 +9,7 @@ import { TimerBattlePlayer } from "./Models";
 import { HiOutlineEllipsisHorizontal } from "react-icons/hi2";
 import SearchGrids from "../grid/SearchGrids";
 import TimeDisplay from "../common/TimeDisplay";
+import InteractiveGrid from "../grid/InteractiveGrid";
 
 export default function TimerBattleScreen() {
   const { battle, username, sendMessage, setBattle, setRoomId } = useContext(TimerBattleContext);
@@ -65,6 +66,7 @@ export default function TimerBattleScreen() {
               penalties={battle.players.find((x) => x.name === username)?.scores[battle.roundNumber]?.penalties ?? 0}
               staticTime={battle.players.find((x) => x.name === username)?.scores[battle.roundNumber]?.time}
             />
+            <HR className="m-1" />
           </div>
         </div>
 
@@ -108,16 +110,24 @@ export default function TimerBattleScreen() {
         <TimerBattleScores />
       </div>
       <div className="flex grow justify-center p-2">
-        <div className="flex flex-col  gap-2 grow max-w-screen-md">
+        <div className="flex flex-col gap-2 grow max-w-screen-md">
           <Button onClick={selectRandomGrid}>Start with Random Grid</Button>
           <Button onClick={leaveGame} role="destructive" color="red">
             Leave Game
           </Button>
         </div>
       </div>
+      {battle.grid && (
+        <div className="flex grow justify-center p-2">
+          <div className="flex flex-col gap-2 grow max-w-screen-md">
+            <h1 className="font-semibold text-2xl text-center my-2">Previous Grid</h1>
+            <InteractiveGrid grid={battle.grid} onCorrect={() => {}} onIncorrect={() => {}} startComplete={true} />
+          </div>
+        </div>
+      )}
       <div className="flex grow justify-center p-2">
         <div className="grow max-w-screen-md">
-          <h1 className="font-semibold text-2xl text-center my-2">Recent NYT Grids</h1>
+          <h1 className="font-semibold text-2xl text-center my-2">Search for a Grid</h1>
           <SearchGrids pageSize={5} onGridChosen={(gridId) => selectGrid(gridId)} />
         </div>
       </div>

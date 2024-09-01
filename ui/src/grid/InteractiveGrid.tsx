@@ -7,16 +7,17 @@ type Props = {
   grid: Grid;
   onCorrect: (category: Category, total: number) => void;
   onIncorrect: (words: string[]) => void;
+  startComplete?: boolean;
 };
 
 function Row({ children }: React.PropsWithChildren) {
   return <div className="flex flex-row aspect-[5/1] md:aspect-[6/1] gap-1 md:gap-2">{children}</div>;
 }
 
-export default function InteractiveGrid({ grid, onCorrect, onIncorrect }: Props) {
+export default function InteractiveGrid({ grid, onCorrect, onIncorrect, startComplete }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
-  const [matchedCategories, setMatchedCategories] = useState<Category[]>([]);
-  const [remaining, setRemaining] = useState<string[]>(_.shuffle(grid.categories.flatMap((x) => x.answers)));
+  const [matchedCategories, setMatchedCategories] = useState<Category[]>(startComplete ? grid.categories : []);
+  const [remaining, setRemaining] = useState<string[]>(_.shuffle(startComplete ? [] : grid.categories.flatMap((x) => x.answers)));
 
   useEffect(() => {
     if (selected.length >= 4) {

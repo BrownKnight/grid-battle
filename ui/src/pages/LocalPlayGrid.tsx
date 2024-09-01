@@ -113,14 +113,14 @@ export default function LocalPlayGrid() {
   if (!playing) {
     return (
       <div className="flex flex-col grow">
-        <div className="flex grow justify-center p-4">
-          <div className="flex flex-col grow max-w-screen-md mx-auto">
+        <div className="flex grow justify-center p-4 pt-3 md:pt-4">
+          <div className="flex flex-col grow max-w-screen-md mx-auto md:px-4 md:pt-1">
             <div className="flex flex-row">
               <GridTitle grid={grid} />
             </div>
 
-            <div className="mt-4 grow">
-              <SimpleGrid grid={grid} matchedCount={0} />
+            <div className="mt-1 md:mt-2 grow">
+              <SimpleGrid grid={grid} matchedCount={0} large />
             </div>
 
             {leaderboardEntry && (

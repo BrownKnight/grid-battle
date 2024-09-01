@@ -27,7 +27,7 @@ export default function TimedGrid({
   matchedCount,
 }: Props) {
   return (
-    <div className={`flex flex-col flex-auto px-2 md:px-4 pb-1 gap-2 rounded-lg border-2 dark:border-slate-700 ${interactive ? "pt-1 md:pt-3" : "pt-1"}`}>
+    <div className={`flex flex-col flex-auto px-2 md:px-4 pb-1 gap-2 rounded-lg ${interactive ? "pt-1 md:pt-3" : "border-2 dark:border-slate-700 pt-1"}`}>
       {interactive ? (
         <InteractiveGrid grid={grid} onCorrect={onCorrect} onIncorrect={onIncorrect} />
       ) : (
