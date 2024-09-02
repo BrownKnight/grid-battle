@@ -1,3 +1,4 @@
+using GridBattle.Api;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Polly;
@@ -9,9 +10,6 @@ public sealed class TimerBattleHub(
     ILogger<TimerBattleHub> logger
 ) : Hub
 {
-    private const string USERNAME = "USERNAME";
-    private const string ROOM_ID = "ROOM_ID";
-
     // Using a simple retry policy for DB operations so that we can safely use Optimistic locking
     // In the future, we should investigate better locking methods.
     private readonly ResiliencePipeline<TimerBattleRoom> _retryPipeline =
@@ -60,8 +58,10 @@ public sealed class TimerBattleHub(
         await db.SaveChangesAsync();
 
         await Groups.AddToGroupAsync(Context.ConnectionId, newBattle.RoomId);
-        Context.Items[USERNAME] = name;
-        Context.Items[ROOM_ID] = newBattle.RoomId;
+
+        Context.SetUsername(name);
+        Context.SetRoomId(newBattle.RoomId);
+
         logger.LogInformation(
             "{Username} has created a new battle room {RoomId}",
             name,
@@ -115,8 +115,8 @@ public sealed class TimerBattleHub(
         );
 
         await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-        Context.Items[USERNAME] = name;
-        Context.Items[ROOM_ID] = roomId;
+        Context.SetUsername(name);
+        Context.SetRoomId(roomId);
 
         logger.LogInformation("{Username} has joined battle room {RoomId}", name, roomId);
         return battle;
@@ -138,8 +138,8 @@ public sealed class TimerBattleHub(
             }
         );
 
-        Context.Items.Remove(USERNAME);
-        Context.Items.Remove(ROOM_ID);
+        Context.RemoveRoomId();
+        Context.RemoveUsername();
         logger.LogInformation("{Username} has left the battle room {RoomId}", name, roomId);
         return true;
     }
@@ -287,7 +287,7 @@ public sealed class TimerBattleHub(
     {
         try
         {
-            var username = Context.Items[USERNAME];
+            var username = Context.GetUsername();
             if (username is not null)
             {
                 logger.LogWarning("Player {Username} disconnected", username);
@@ -415,10 +415,10 @@ public sealed class TimerBattleHub(
     }
 
     private string GetRoomId() =>
-        Context.Items[ROOM_ID]?.ToString()
+        Context.GetRoomId()
         ?? throw new InvalidOperationException("Unexpected error, Room ID not in context");
 
     private string GetUsername() =>
-        Context.Items[USERNAME]?.ToString()
-        ?? throw new InvalidOperationException("Unexpected error, Room ID not in context");
+        Context.GetUsername()
+        ?? throw new InvalidOperationException("Unexpected error, Username not in context");
 }

@@ -1,3 +1,4 @@
+using GridBattle.Data;
 using Microsoft.AspNetCore.SignalR;
 
 namespace GridBattle.Api;
@@ -13,6 +14,9 @@ public sealed class HubFilter(ILogger<HubFilter> logger) : IHubFilter
         Func<HubInvocationContext, ValueTask<object?>> next
     )
     {
+        using var usernameScope = logger.BeginScope("Username:{Username}", invocationContext.Context.GetUsername());
+        using var roomIdScope = logger.BeginScope("RoomId:{RoomId}", invocationContext.Context.GetRoomId());
+
         logger.LogInformation("Calling hub method '{MethodName}'", invocationContext.HubMethodName);
         try
         {

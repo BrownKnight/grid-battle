@@ -13,6 +13,7 @@ builder
     {
         opt.IncludeScopes = true;
         opt.UseUtcTimestamp = true;
+        opt.SingleLine = true;
         opt.TimestampFormat = "yyyy-MM-dd'T'HH:mm:ss.fff'Z' ";
     });
 

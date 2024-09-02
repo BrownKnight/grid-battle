@@ -18,13 +18,16 @@ public sealed class DataCleanupService(
         {
             try
             {
-                logger.LogInformation("Searching for stale Timer Battles to remove");
                 using var db = dbContextFactory.CreateDbContext();
                 var modifiedBefore = DateTimeOffset.UtcNow.AddHours(-1);
                 var staleBattleCount = await db
                     .TimerBattleRooms.Where(x => x.ModifiedDateTime < modifiedBefore)
                     .ExecuteDeleteAsync(stoppingToken);
-                logger.LogWarning("Deleted {Count} TimerBattleRooms", staleBattleCount);
+
+                if (staleBattleCount > 0)
+                {
+                    logger.LogWarning("Deleted {Count} TimerBattleRooms", staleBattleCount);
+                }
             }
             catch (Exception e)
             {
