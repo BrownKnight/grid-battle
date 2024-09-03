@@ -115,7 +115,7 @@ function LoginModal({
   onClose: () => void;
   setUser: Dispatch<SetStateAction<User | undefined>>;
 }) {
-  const [type, setType] = useState<"login" | "register" | "validateEmail">("login");
+  const [type, setType] = useState<"login" | "register" | "validateEmail" | "forgotPassword" | "forgotPasswordConfirm">("login");
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -234,6 +234,71 @@ function LoginModal({
     });
   };
 
+  const sendForgotPasswordVerificationCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage("");
+
+    const request = {
+      ClientId: "6q9id5vhqfocb9mc0deep4at49",
+      Username: username,
+    };
+    fetch("https://cognito-idp.eu-west-2.amazonaws.com/", {
+      method: "POST",
+      headers: [
+        ["Content-Type", "application/x-amz-json-1.1"],
+        ["X-Amz-Target", "AWSCognitoIdentityProviderService.ForgotPassword"],
+      ],
+      body: JSON.stringify(request),
+    }).then((res) => {
+      if (res.status >= 400) {
+        res.json().then((err) => {
+          if (err.__type === "InvalidParameterException") {
+            setErrorMessage("The provided username/email does not exist.");
+            return;
+          }
+
+          setErrorMessage(err.message ?? "Failed to process request.");
+        });
+        return;
+      }
+      setType("forgotPasswordConfirm");
+    });
+  };
+
+  const confirmChangePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage("");
+
+    const request = {
+      ClientId: "6q9id5vhqfocb9mc0deep4at49",
+      Username: username,
+      Password: password,
+      ConfirmationCode: verificationCode,
+    };
+    fetch("https://cognito-idp.eu-west-2.amazonaws.com/", {
+      method: "POST",
+      headers: [
+        ["Content-Type", "application/x-amz-json-1.1"],
+        ["X-Amz-Target", "AWSCognitoIdentityProviderService.ConfirmForgotPassword"],
+      ],
+      body: JSON.stringify(request),
+    }).then((res) => {
+      if (res.status >= 400) {
+        res.json().then((err) => {
+          if (err.__type === "ExpiredCodeException") {
+            setType("forgotPassword");
+            setErrorMessage("The code provided has expired, please request a new code by providing your username again.");
+            return;
+          }
+
+          setErrorMessage(err.message ?? "Failed to reset password due to unknown error.");
+        });
+        return;
+      }
+      setType("login");
+    });
+  };
+
   const loginForm = (
     <>
       <ButtonGroup>
@@ -285,7 +350,12 @@ function LoginModal({
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <Button type="submit" fullSized>
+        <div className="text-sm text-sky-400 hover:text-sky-600">
+          <a href="#" onClick={() => setType("forgotPassword")}>
+            Forgot your Password?
+          </a>
+        </div>
+        <Button className="mt-3" type="submit" fullSized>
           {type === "login" ? "Login" : "Register"}
         </Button>
       </form>
@@ -314,12 +384,95 @@ function LoginModal({
     </form>
   );
 
+  const forgotPasswordForm = (
+    <form onSubmit={sendForgotPasswordVerificationCode}>
+      <div className="mb-2 dark:text-gray-100">
+        Please enter the username/email of the account you would like to reset the password for:
+      </div>
+      <FloatingLabel
+        id="username"
+        name="username"
+        className="dark:bg-slate-900"
+        variant="outlined"
+        label="Username"
+        autoComplete="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        maxLength={64}
+        required
+      />
+      <Button type="submit" fullSized>
+        Submit
+      </Button>
+    </form>
+  );
+
+  const changePasswordForm = (
+    <form action="#" method="POST" onSubmit={confirmChangePassword}>
+      <span className="dark:text-gray-100">A verification code has been sent to your email. Please enter it and your new password.</span>
+      <FloatingLabel
+        id="verification-code"
+        name="verification-code"
+        className="dark:bg-slate-900"
+        variant="outlined"
+        label="Verification Code"
+        autoCorrect="false"
+        type="text"
+        autoComplete="one-time-code"
+        value={verificationCode}
+        onChange={(e) => setVerificationCode(e.target.value)}
+        required
+      />
+      <FloatingLabel
+        id="username"
+        name="username"
+        className="dark:bg-slate-900"
+        variant="outlined"
+        label="Username"
+        autoComplete="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        maxLength={64}
+        required
+      />
+      <FloatingLabel
+        id="password"
+        name="password"
+        className="dark:bg-slate-900"
+        variant="outlined"
+        label="Password"
+        type="password"
+        autoComplete="new-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <Button type="submit" fullSized>
+        Change Password
+      </Button>
+    </form>
+  );
+
+  const content = () => {
+    switch (type) {
+      case "login":
+      case "register":
+        return loginForm;
+      case "validateEmail":
+        return validateEmailForm;
+      case "forgotPassword":
+        return forgotPasswordForm;
+      case "forgotPasswordConfirm":
+        return changePasswordForm;
+    }
+  };
+
   return (
     <Modal show={show} onClose={onClose} dismissible>
       <Modal.Header>My Account</Modal.Header>
       <Modal.Body>
         <div className="flex flex-col gap-4">
-          {type == "validateEmail" ? validateEmailForm : loginForm}
+          {content()}
           <span className="text-red-500">{errorMessage}</span>
         </div>
       </Modal.Body>
