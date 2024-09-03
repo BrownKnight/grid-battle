@@ -2,7 +2,8 @@ import { Button, ButtonGroup, FloatingLabel, Modal } from "flowbite-react";
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import useApiClient from "./useApiClient";
-import { useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
+import { RxCaretLeft } from "react-icons/rx";
 
 export type User = { id: string; username: string; idToken: string; refreshToken: string };
 export type Props = {
@@ -23,13 +24,21 @@ export const UserContext = createContext<Props>({
 
 export default function UserContextProvider({ children }: React.PropsWithChildren) {
   const navigate = useNavigate();
+  const isWellKnownChangePassword = useMatch("/.well-known/change-password");
   const [user, setUser] = useLocalStorageState<User | undefined>("user", { defaultValue: undefined });
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  // Show modal by default if we're on the ChangePassword URL
+  const [isLoginOpen, setIsLoginOpen] = useState(!!isWellKnownChangePassword);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(!!user?.idToken);
   }, [user]);
+
+  useEffect(() => {
+    if (isWellKnownChangePassword) {
+      setUser(undefined);
+    }
+  }, [isWellKnownChangePassword, setUser]);
 
   const showLogin = () => {
     setIsLoginOpen(true);
@@ -74,7 +83,11 @@ export default function UserContextProvider({ children }: React.PropsWithChildre
 
   const onClose = () => {
     setIsLoginOpen(false);
-    navigate("#");
+    if (isWellKnownChangePassword) {
+      navigate("/");
+    } else {
+      navigate("#");
+    }
   };
 
   return (
@@ -115,13 +128,18 @@ function LoginModal({
   onClose: () => void;
   setUser: Dispatch<SetStateAction<User | undefined>>;
 }) {
-  const [type, setType] = useState<"login" | "register" | "validateEmail" | "forgotPassword" | "forgotPasswordConfirm">("login");
+  const isWellKnownChangePassword = useMatch("/.well-known/change-password");
+  const navigate = useNavigate();
+  const apiClient = useApiClient();
+
+  type Page = "login" | "register" | "validateEmail" | "forgotPassword" | "forgotPasswordConfirm";
+  const [page, setPage] = useState<Page>(isWellKnownChangePassword ? "forgotPassword" : "login");
+
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const apiClient = useApiClient();
 
   const login = (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,7 +165,7 @@ function LoginModal({
         if (res.status >= 400) {
           res.json().then((err) => {
             if (err.__type === "UserNotConfirmedException") {
-              setType("validateEmail");
+              setPage("validateEmail");
               return;
             }
             setErrorMessage(err.message ?? "Failed to login.");
@@ -167,6 +185,9 @@ function LoginModal({
           apiClient.getCurrentProfile(idToken).then(({ json }) => {
             setUser({ id: json.userId, username: json.username, idToken: idToken, refreshToken: refreshToken });
             onClose();
+            if (isWellKnownChangePassword) {
+              navigate("/");
+            }
           });
         } else {
           setErrorMessage("Failed to login.");
@@ -221,7 +242,7 @@ function LoginModal({
       if (res.status >= 400) {
         res.json().then((err) => {
           if (err.__type === "ExpiredCodeException") {
-            setType("login");
+            setPage("login");
             setErrorMessage("Your code has expired, please try to log in again");
             return;
           }
@@ -261,7 +282,7 @@ function LoginModal({
         });
         return;
       }
-      setType("forgotPasswordConfirm");
+      setPage("forgotPasswordConfirm");
     });
   };
 
@@ -286,7 +307,7 @@ function LoginModal({
       if (res.status >= 400) {
         res.json().then((err) => {
           if (err.__type === "ExpiredCodeException") {
-            setType("forgotPassword");
+            setPage("forgotPassword");
             setErrorMessage("The code provided has expired, please request a new code by providing your username again.");
             return;
           }
@@ -295,22 +316,28 @@ function LoginModal({
         });
         return;
       }
-      setType("login");
+      setPage("login");
     });
   };
+
+  const returnToLogin = (
+    <a href="#" className="inline-flex items-center mb-4 text-sm text-sky-400 hover:text-sky-600" onClick={() => setPage("login")}>
+      <RxCaretLeft /> <span>Return to Login</span>
+    </a>
+  );
 
   const loginForm = (
     <>
       <ButtonGroup>
-        <Button fullSized onClick={() => setType("login")} color={type === "login" ? "dark" : "gray"}>
+        <Button fullSized onClick={() => setPage("login")} color={page === "login" ? "dark" : "gray"}>
           Login
         </Button>
-        <Button fullSized onClick={() => setType("register")} color={type === "register" ? "dark" : "gray"}>
+        <Button fullSized onClick={() => setPage("register")} color={page === "register" ? "dark" : "gray"}>
           Register
         </Button>
       </ButtonGroup>
 
-      <form action="#" method="POST" onSubmit={(e) => (type === "login" ? login(e) : register(e))} autoComplete="on">
+      <form action="#" method="POST" onSubmit={(e) => (page === "login" ? login(e) : register(e))} autoComplete="on">
         <FloatingLabel
           id="username"
           name="username"
@@ -323,7 +350,7 @@ function LoginModal({
           maxLength={64}
           required
         />
-        {type === "register" && (
+        {page === "register" && (
           <FloatingLabel
             id="email"
             name="email"
@@ -345,18 +372,18 @@ function LoginModal({
           variant="outlined"
           label="Password"
           type="password"
-          autoComplete={type === "login" ? "current-password" : "new-password"}
+          autoComplete={page === "login" ? "current-password" : "new-password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <div className="text-sm text-sky-400 hover:text-sky-600">
-          <a href="#" onClick={() => setType("forgotPassword")}>
+        <div className="text-xs text-sky-400 hover:text-sky-600">
+          <a href="#" onClick={() => setPage("forgotPassword")}>
             Forgot your Password?
           </a>
         </div>
         <Button className="mt-3" type="submit" fullSized>
-          {type === "login" ? "Login" : "Register"}
+          {page === "login" ? "Login" : "Register"}
         </Button>
       </form>
     </>
@@ -364,6 +391,7 @@ function LoginModal({
 
   const validateEmailForm = (
     <form onSubmit={confirmAccount}>
+      {returnToLogin}
       <span className="dark:text-gray-100">A verification code has been sent to your email. Please enter it to confirm your account.</span>
       <FloatingLabel
         id="verification-code"
@@ -386,6 +414,7 @@ function LoginModal({
 
   const forgotPasswordForm = (
     <form onSubmit={sendForgotPasswordVerificationCode}>
+      {returnToLogin}
       <div className="mb-2 dark:text-gray-100">
         Please enter the username/email of the account you would like to reset the password for:
       </div>
@@ -409,6 +438,7 @@ function LoginModal({
 
   const changePasswordForm = (
     <form action="#" method="POST" onSubmit={confirmChangePassword}>
+      {returnToLogin}
       <span className="dark:text-gray-100">A verification code has been sent to your email. Please enter it and your new password.</span>
       <FloatingLabel
         id="verification-code"
@@ -454,7 +484,7 @@ function LoginModal({
   );
 
   const content = () => {
-    switch (type) {
+    switch (page) {
       case "login":
       case "register":
         return loginForm;

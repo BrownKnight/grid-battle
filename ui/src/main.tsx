@@ -23,6 +23,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
       <Route path="" element={<Home />} />
+      <Route path="/.well-known/change-password" element={<Home />} />
       <Route path="/:battleCode" element={<CreateJoinTimerBattle />} />
       <Route path="/battle" element={<CreateJoinTimerBattle />} />
       <Route path="/grids/create" element={<CreateGrid />} />
