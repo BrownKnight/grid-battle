@@ -251,6 +251,7 @@ function LoginModal({
         });
         return;
       }
+      setVerificationCode("");
       return login(e);
     });
   };
@@ -317,11 +318,13 @@ function LoginModal({
         return;
       }
       setPage("login");
+      setVerificationCode("");
+      navigate("#");
     });
   };
 
   const returnToLogin = (
-    <a href="#" className="inline-flex items-center mb-4 text-sm text-sky-400 hover:text-sky-600" onClick={() => setPage("login")}>
+    <a href="#" className="flex items-center mb-4 text-sm text-sky-400 hover:text-sky-600" onClick={() => setPage("login")}>
       <RxCaretLeft /> <span>Return to Login</span>
     </a>
   );
@@ -366,8 +369,8 @@ function LoginModal({
           />
         )}
         <FloatingLabel
-          id="password"
-          name="password"
+          id={page === "login" ? "current-password" : "new-password"}
+          name={page === "login" ? "current-password" : "new-password"}
           className="dark:bg-slate-900"
           variant="outlined"
           label="Password"
@@ -437,7 +440,7 @@ function LoginModal({
   );
 
   const changePasswordForm = (
-    <form action="#" method="POST" onSubmit={confirmChangePassword}>
+    <form action="#" method="POST" onSubmit={confirmChangePassword} autoComplete="on">
       {returnToLogin}
       <span className="dark:text-gray-100">A verification code has been sent to your email. Please enter it and your new password.</span>
       <FloatingLabel
